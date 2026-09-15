@@ -143,6 +143,15 @@
   }
   .help-item:last-child{ margin-bottom:0; }
   .help-item strong{ color: var(--text); }
+  .agent-cheatsheet{
+    margin:6px 0 0;
+    padding-inline-start:18px;
+    font-size:13px;
+    line-height:1.6;
+    color: var(--text-dim);
+  }
+  .agent-cheatsheet li{ margin:5px 0; }
+  .agent-cheatsheet li strong{ color: var(--accent); margin-inline-end:4px; }
 
   /* ---------- Layout ---------- */
   .layout{
@@ -462,6 +471,144 @@
   #renderedPreview code{ font-family: var(--font-mono); font-size:0.92em; background: var(--panel); border-radius:4px; padding:1px 5px; }
   #renderedPreview pre code{ background:transparent; padding:0; }
 
+  /* ---------- Attach: drop overlay + chip include toggle ---------- */
+  .drop-overlay{
+    display:none;
+    position:fixed; inset:0; z-index:60;
+    background: rgba(11,18,32,.85);
+    border:2px dashed var(--accent-dim);
+    color: var(--text);
+    font-size:16px; font-weight:600;
+    align-items:center; justify-content:center;
+    pointer-events:none;
+  }
+  .drop-overlay.show{ display:flex; }
+  html[data-theme="light"] .drop-overlay{ background: rgba(244,246,251,.9); }
+  .attach-chip .chip-inc{ accent-color: var(--accent); cursor:pointer; margin:0; width:14px; height:14px; flex:0 0 auto; }
+  .attach-chip.excluded{ opacity:.45; }
+  .attach-chip.excluded .chip-name{ text-decoration:line-through; }
+
+  /* ---------- History search/filter ---------- */
+  .history-controls{ display:flex; gap:6px; margin-bottom:8px; flex-wrap:wrap; }
+  .history-controls input[type="text"]{
+    padding:6px 10px; font-size:12.5px; flex:1 1 140px; min-width:0;
+  }
+  .history-controls .select-input{ padding:6px 8px; font-size:12.5px; }
+
+  /* ---------- Attached file chips ---------- */
+  .attach-chips{ display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
+  .attach-chips:empty{ display:none; }
+  .attach-chip{
+    display:inline-flex; align-items:center; gap:7px;
+    background: var(--panel-alt);
+    border:1px solid var(--border);
+    border-radius:999px;
+    padding:4px 6px 4px 12px;
+    font-size:12px;
+    font-family: var(--font-mono);
+    max-width:100%;
+  }
+  .attach-chip .chip-name{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:220px; }
+  .attach-chip .chip-size{ color: var(--text-faint); }
+  .attach-chip .chip-del{
+    background:none; border:none; color: var(--text-faint);
+    cursor:pointer; font-size:12px; padding:1px 5px; border-radius:999px;
+  }
+  .attach-chip .chip-del:hover{ color: var(--danger); background: var(--accent-soft-bg); }
+
+  /* ---------- Quality panel ---------- */
+  .quality-panel{
+    display:none;
+    margin-bottom:12px;
+    background: var(--panel-alt);
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:12px 14px;
+  }
+  .quality-panel.show{ display:block; }
+  .quality-scores{ display:flex; gap:10px; flex-wrap:wrap; margin-bottom:10px; }
+  .quality-score{
+    flex:1 1 140px;
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:8px 10px;
+    background: var(--panel);
+  }
+  .quality-score .qs-head{ display:flex; justify-content:space-between; align-items:baseline; gap:6px; font-size:12.5px; color: var(--text-dim); }
+  .quality-score .qs-val{ font-family: var(--font-mono); font-size:15px; font-weight:600; color: var(--text); }
+  .quality-score.good .qs-val{ color:#5FAF70; }
+  .quality-score.mid .qs-val{ color: var(--accent); }
+  .quality-score.low .qs-val{ color: var(--danger); }
+  .quality-tips{ margin:0; padding-inline-start:20px; font-size:12.5px; color: var(--text-dim); }
+  .quality-tips li{ margin:4px 0; }
+  .quality-tips li strong{ color: var(--text); }
+  .quality-empty{ font-size:12.5px; color: var(--text-faint); }
+
+  /* ---------- Welcome banner ---------- */
+  .welcome-banner{
+    max-width:1240px;
+    margin:16px auto 0;
+    padding:14px 24px;
+    display:flex;
+    align-items:flex-start;
+    gap:12px;
+    background: var(--accent-soft-bg);
+    border:1px solid var(--accent-dim);
+    border-radius:12px;
+  }
+  .welcome-banner .wb-text{ flex:1 1 auto; min-width:0; font-size:13px; line-height:1.6; color: var(--text); }
+  .welcome-banner .wb-text strong{ color: var(--accent); }
+  .welcome-banner .wb-close{
+    flex:0 0 auto;
+    background:none; border:none; color: var(--text-dim);
+    font-size:15px; cursor:pointer; padding:2px 6px;
+  }
+  .welcome-banner .wb-close:hover{ color: var(--text); }
+  @media (max-width:999px){ .welcome-banner{ margin:12px 16px 0; padding:12px 16px; } }
+
+  /* ---------- Mobile generate FAB ---------- */
+  .generate-fab{
+    display:none;
+    position:fixed;
+    inset-inline-end:18px;
+    bottom:18px;
+    z-index:40;
+    border:none;
+    border-radius:999px;
+    padding:13px 20px;
+    font-family: var(--font-sans);
+    font-size:14px;
+    font-weight:600;
+    background: var(--accent);
+    color: var(--accent-ink);
+    box-shadow: 0 6px 18px rgba(0,0,0,.35);
+    cursor:pointer;
+  }
+  .generate-fab:active{ transform: scale(.97); }
+  @media (max-width:999px){
+    .generate-fab{ display:block; }
+  }
+
+  /* ---------- Compare view ---------- */
+  .compare-grid{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  @media (max-width:860px){ .compare-grid{ grid-template-columns:1fr; } }
+  .compare-pane-head{
+    display:flex; align-items:baseline; justify-content:space-between; gap:8px;
+    margin-bottom:6px; font-size:12.5px; font-weight:600; color: var(--text-dim);
+  }
+  .compare-grid textarea{
+    width:100%; min-height:480px; max-height:70vh; overflow:auto;
+    background: var(--panel-alt);
+    border:1px solid var(--border);
+    border-radius:8px;
+    color: var(--text);
+    padding:12px;
+    font-family: var(--font-mono);
+    font-size:12px;
+    line-height:1.55;
+    resize:vertical;
+  }
+
   /* ---------- History ---------- */
   .history-panel{
     background: var(--panel);
@@ -519,6 +666,9 @@
     padding:0 24px;
     font-size:12.5px;
     color: var(--text-faint);
+  }
+  @media (max-width:999px){
+    footer{ margin-bottom:84px; }
   }
   @media (max-width:999px){
     footer{ padding:0 16px; }
@@ -676,7 +826,27 @@
   <div class="help-item"><strong data-i18n="helpAgentTitle">Target agent</strong><span data-i18n="helpAgentBody"> — adds a short note tailored to the coding agent you're using (Claude Code, Codex, Cursor...).</span></div>
   <div class="help-item"><strong data-i18n="helpDiffsTitle">Diffs only</strong><span data-i18n="helpDiffsBody"> — asks the agent to prefer targeted patches over rewriting whole files.</span></div>
   <div class="help-item"><strong data-i18n="helpFormatTitle">Output format</strong><span data-i18n="helpFormatBody"> — Markdown, plain text, or XML tags (XML is auto-suggested for Claude Code).</span></div>
+  <div class="help-item"><strong data-i18n="helpKeyFilesTitle">Key files</strong><span data-i18n="helpKeyFilesBody"> — list the files the agent should read first; it anchors the prompt to your actual code.</span></div>
+  <div class="help-item"><strong data-i18n="helpAttachTitle">Reference files</strong><span data-i18n="helpAttachBody"> — for material the agent can't reach in the repo (exported data, production logs, specs). Repo files belong in Key files; the agent reads those itself.</span></div>
+  <div class="help-item"><strong data-i18n="helpShareTitle">Share as link</strong><span data-i18n="helpShareBody"> — encodes the whole brief into the URL so a teammate opens the exact same form. Nothing is uploaded; the link carries the data.</span></div>
+  <div class="help-item"><strong data-i18n="helpResponseLangTitle">Reply language</strong><span data-i18n="helpResponseLangBody"> — asks the agent to write its summary in Arabic or English (code stays in its original language).</span></div>
+  <div class="help-item help-agent-item"><strong data-i18n="helpAgentsTitle">Agent cheatsheet</strong>
+    <ul class="agent-cheatsheet">
+      <li><strong>Claude Code</strong><span data-i18n="agentCcBody"> — strongest with XML-tagged prompts (auto-selected) and explicit Validation + Definition of Done sections; follows AGENTS/CLAUDE.md conventions and keeps diffs tight when told to.</span></li>
+      <li><strong>Codex</strong><span data-i18n="agentCodexBody"> — best with a compact brief and a clear root-cause flow; respond well to “investigate before acting” and verification commands it can run in the shell.</span></li>
+      <li><strong>Cursor</strong><span data-i18n="agentCursorBody"> — strongest at multi-file UI-adjacent edits; benefits from listed key files and constraints that name what must not change.</span></li>
+      <li><strong>Gemini CLI</strong><span data-i18n="agentGeminiBody"> — good with plan-first prompts; asks it to explain the plan briefly, then execute with concrete edits and run the project's own checks.</span></li>
+      <li><strong>Any agent</strong><span data-i18n="agentGenericBody"> — the generic opener keeps the prompt tool-neutral; pick a specific agent when you want its working-style notes appended.</span></li>
+    </ul>
+  </div>
   <div class="help-item"><strong data-i18n="helpHistoryTitle">History</strong><span data-i18n="helpHistoryBody"> — every prompt you generate is saved locally; similar past tasks are suggested for reuse.</span></div>
+</div>
+
+<div class="welcome-banner" id="welcomeBanner" style="display:none;">
+  <div class="wb-text">
+    <strong data-i18n="welcomeTitle">Welcome!</strong> <span data-i18n="welcomeBody">Start with the Main objective — that's the one field that matters most. Everything else is optional but makes the prompt sharper. Hit Generate Prompt when ready.</span>
+  </div>
+  <button type="button" class="wb-close" id="welcomeCloseBtn" data-i18n-aria="welcomeDismissAria" aria-label="Dismiss welcome message">✕</button>
 </div>
 
 <main class="layout">
@@ -744,6 +914,20 @@
         <label for="extraContext" data-i18n="extraContextLabel">Extra context</label>
         <textarea id="extraContext" rows="3" data-i18n-placeholder="extraContextPlaceholder" placeholder="Anything else the agent should know..."></textarea>
       </div>
+      <div class="field">
+        <label for="keyFiles" data-i18n="keyFilesLabel">Key files / entry points <span class="badge" data-i18n="optionalBadge">(optional)</span></label>
+        <textarea id="keyFiles" class="mono" rows="3" data-i18n-placeholder="keyFilesPlaceholder" placeholder="e.g. src/app.py, routes/api.js, package.json"></textarea>
+        <div class="hint" data-i18n="keyFilesHint">Optional — files the agent should read first. Grounds the agent in the real code instead of a generic scan.</div>
+      </div>
+      <div class="field">
+        <label data-i18n="attachLabel">Reference files <span class="badge" data-i18n="optionalBadge">(optional)</span></label>
+        <div class="controls-row">
+          <button type="button" class="btn btn-secondary" id="attachBtn" data-i18n="attachBtn">Attach files</button>
+          <input type="file" id="attachInput" multiple data-i18n-aria="attachAria" aria-label="Attach reference files" style="display:none;">
+        </div>
+        <div id="attachChips" class="attach-chips"></div>
+        <div class="hint" data-i18n="attachHint">Text files are read in your browser (never uploaded) and embedded in the prompt, so the agent sees the real code or data. Cleared when you reload the page.</div>
+      </div>
     </section>
 
     <section class="sheet">
@@ -778,6 +962,8 @@
             <button type="button" class="quickpack-btn" data-pack="retry" data-i18n="packRetry">Retry / backoff</button>
             <button type="button" class="quickpack-btn" data-pack="leaks" data-i18n="packLeaks">Resource leaks</button>
             <button type="button" class="quickpack-btn" data-pack="session" data-i18n="packSession">Session / cookies</button>
+            <button type="button" class="quickpack-btn" data-pack="datachecks" data-i18n="packDataChecks">Output verification</button>
+            <button type="button" class="quickpack-btn" data-pack="datamessy" data-i18n="packDataMessy">Messy data handling</button>
           </div>
           <div class="hint" data-i18n="quickpackHint">Quick-Packs — click to add a ready-made requirement line (click again to remove it).</div>
         </div>
@@ -851,6 +1037,7 @@
         <button type="button" class="preset-btn" data-preset="documentation">Documentation</button>
         <button type="button" class="preset-btn" data-preset="migration">Migration / Integration</button>
         <button type="button" class="preset-btn" data-preset="research">Research</button>
+        <button type="button" class="preset-btn" data-preset="data">Data Analysis / Script</button>
       </div>
       <div class="hint" id="taskTypeHint" style="display:none;"></div>
     </section>
@@ -888,8 +1075,10 @@
           <button type="button" class="btn btn-primary" id="generateBtn" data-i18n="generateBtn">Generate Prompt</button>
           <button type="button" class="btn btn-secondary" id="copyBtn" data-i18n="copyBtn">Copy Prompt</button>
           <select id="downloadFormat" class="select-input select-compact" data-i18n-aria="downloadFormatAria" aria-label="Download file format">
-            <option value="md">.md</option>
-            <option value="txt">.txt</option>
+            <option value="md" data-i18n="dlMd">.md</option>
+            <option value="txt" data-i18n="dlTxt">.txt</option>
+            <option value="claude-md">CLAUDE.md</option>
+            <option value="agents-md">AGENTS.md</option>
           </select>
           <button type="button" class="btn btn-secondary" id="downloadBtn" data-i18n="downloadBtn">Download</button>
           <button type="button" class="btn btn-ghost" id="clearBtn" data-i18n="clearBtn">Clear</button>
@@ -904,6 +1093,7 @@
         <div class="format-toggle" role="group" data-i18n-aria="outputViewAria" aria-label="Output view">
           <button type="button" class="format-btn active" data-view="raw" data-i18n="viewRaw">Raw</button>
           <button type="button" class="format-btn" data-view="rendered" data-i18n="viewRendered">Rendered</button>
+          <button type="button" class="format-btn" data-view="compare" data-i18n="viewCompare">Compare</button>
         </div>
         <div class="format-toggle">
           <select id="complexityOverride" class="select-input select-compact" data-i18n-aria="complexityOverrideLabel" aria-label="Complexity">
@@ -918,30 +1108,59 @@
             <option value="en" data-i18n="headingsEn">English headings</option>
             <option value="ar" data-i18n="headingsAr">Arabic headings</option>
           </select>
+          <select id="responseLang" class="select-input select-compact" data-i18n-aria="responseLangAria" aria-label="Agent response language">
+            <option value="auto" data-i18n="responseLangAuto">Reply: Auto</option>
+            <option value="en" data-i18n="responseLangEn">Reply: English</option>
+            <option value="ar" data-i18n="responseLangAr">Reply: Arabic</option>
+          </select>
         </div>
         <label class="live-preview-toggle">
           <input type="checkbox" id="livePreviewToggle">
           <span data-i18n="livePreviewLabel">Live preview</span>
         </label>
+        <button type="button" class="format-btn" id="qualityBtn" data-i18n="qualityBtn">Quality check</button>
       </div>
       <div class="hint hint-clickable" id="historySuggestHint" style="display:none;"></div>
+      <div class="quality-panel" id="qualityPanel"></div>
       <textarea id="output" data-i18n-placeholder="outputPlaceholder" placeholder="Your generated prompt will appear here. Fill in the sections on the left, then choose Generate Prompt."></textarea>
       <div id="renderedPreview"></div>
+      <div id="compareWrap" style="display:none;">
+        <div class="compare-grid">
+          <div>
+            <div class="compare-pane-head"><span data-i18n="compareBefore">Before — previous version</span><span class="counter" id="compareMetaBefore"></span></div>
+            <textarea id="compareBefore" readonly></textarea>
+          </div>
+          <div>
+            <div class="compare-pane-head"><span data-i18n="compareAfter">After — current version</span><span class="counter" id="compareMetaAfter"></span></div>
+            <textarea id="compareAfter" readonly></textarea>
+          </div>
+        </div>
+      </div>
       <div class="output-meta" id="outputMeta">0 characters · 0 lines</div>
     </div>
 
-    <div class="history-panel" id="historyPanel">
-      <div class="history-head">
-        <span data-i18n="historyTitle">Recent prompts</span>
-        <button type="button" class="btn btn-ghost" id="historyClearBtn" data-i18n="historyClear">Clear all</button>
-      </div>
-      <div class="history-list" id="historyList"></div>
+    <div class="history-panel" id="historyPanel">        <div class="history-head">
+          <span data-i18n="historyTitle">Recent prompts</span>
+          <button type="button" class="btn btn-secondary" id="shareBtn" data-i18n="shareBtn">Share as link</button>
+          <button type="button" class="btn btn-ghost" id="historyClearBtn" data-i18n="historyClear">Clear all</button>
+        </div>
+        <div class="history-controls">
+          <input type="text" id="historySearch" data-i18n-placeholder="historySearchPlaceholder" placeholder="Search titles and text…">
+          <select id="historyTypeFilter" class="select-input" data-i18n-aria="historyTypeFilterAria" aria-label="Filter by task type">
+            <option value="" data-i18n="historyFilterAll">All task types</option>
+          </select>
+        </div>
+        <div class="history-list" id="historyList"></div>
     </div>
   </div>
 
 </main>
 
 <footer data-i18n="footerText">Runs entirely in your browser — nothing here is sent anywhere. Drafts and templates are saved locally in your browser's storage.</footer>
+
+<button type="button" class="generate-fab" id="generateFab" data-i18n="generateBtn">Generate Prompt</button>
+
+<div class="drop-overlay" id="dropOverlay" data-i18n="dropOverlayText">Drop files to attach them as reference material</div>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
@@ -1020,6 +1239,10 @@
       outputViewAria: "Output view",
       viewRaw: "Raw",
       viewRendered: "Rendered",
+      viewCompare: "Compare",
+      compareBefore: "Before — previous wording",
+      compareAfter: "After — current wording",
+      counterChars: "{chars} chars",
       headingsLangAria: "Section headings language",
       headingsEn: "English headings",
       headingsAr: "Arabic headings",
@@ -1034,7 +1257,7 @@
       helpTaskTypeTitle: "Task type",
       helpTaskTypeBody: " — pick one or more manually, or leave it blank and the generator will guess from what you wrote (shown as a hint with a confidence level).",
       helpQuickpackTitle: "Quick-Packs",
-      helpQuickpackBody: " — one-click requirement snippets that appear for Automation/Scraping tasks (proxy handling, retries, rate limits...).",
+      helpQuickpackBody: " — one-click requirement snippets that appear for Automation/Scraping and Data Analysis tasks (proxy handling, retries, rate limits, data checks...).",
       helpComplexityTitle: "Complexity",
       helpComplexityBody: " — controls how much detail the generated prompt includes. Auto sizes it to your inputs; you can force Simple/Standard/Complex instead.",
       helpAgentTitle: "Target agent",
@@ -1082,6 +1305,8 @@
       packRetry: "Retry / backoff",
       packLeaks: "Resource leaks",
       packSession: "Session / cookies",
+      packDataChecks: "Output verification",
+      packDataMessy: "Messy data handling",
       quickpackHint: "Quick-Packs — click to add a ready-made requirement line (click again to remove it).",
       diffsOnlyLabel: "Diffs only (no full-file rewrites)",
       styleLabel: "Style / conventions",
@@ -1097,6 +1322,67 @@
       toastHistoryLoaded: "Loaded from history",
       toastHistoryCleared: "History cleared",
       toastHistoryDeleted: "Entry removed",
+      optionalBadge: "(optional)",
+      qualityBtn: "Quality check",
+      qualityEmpty: "Generate a prompt first, then run the quality check.",
+      qualityNoTips: "Looks solid — no blocking suggestions.",
+      quality_grounding: "Grounding",
+      quality_specificity: "Specificity",
+      quality_verifiability: "Verifiability",
+      qualityTip_AddFiles: "Add key files or attach a reference file — grounding the agent in real code is the single biggest quality lever.",
+      qualityTip_AddKnownProblems: "Paste the actual error/log in Known Problems so the agent reproduces instead of guesses.",
+      qualityTip_ObjectiveDetail: "Your objective is thin — add the what, where, and expected behavior so the agent cannot drift.",
+      qualityTip_NoObjective: "No objective yet — this is the one field that matters most.",
+      qualityTip_AddRequirements: "List concrete requirements (one per line) to bound the task.",
+      qualityTip_AddExpected: "Describe the expected final result so \"done\" is unambiguous.",
+      qualityTip_MakeMeasurable: "Make the expected result measurable — numbers, visible behavior, or a check the agent can run.",
+      qualityTip_AddValidation: "The prompt lacks explicit validation instructions — the agent may skip verification.",
+      shareBtn: "Share as link",
+      toastShareCopied: "Share link copied — anyone opening it sees this exact brief",
+      toastShareReady: "Share link is in the address bar — copy it from there",
+      toastShareTooLong: "This brief is too large for a share link — trim long fields",
+      toastShareFailed: "Could not build the share link",
+      toastSnippetAttached: "Pasted text captured as a reference snippet",
+      attachIncludeTitle: "Include in prompt",
+      attachIncludeAria: "Include {name} in the prompt",
+      dropOverlayText: "Drop files to attach them as reference material",
+      historySearchPlaceholder: "Search titles and text…",
+      historyTypeFilterAria: "Filter by task type",
+      historyFilterAll: "All task types",
+      historyNoMatch: "No history entries match your search",
+      attachLabel: "Reference files",
+      attachBtn: "Attach files",
+      attachAria: "Attach reference files",
+      attachHint: "For material the agent can't reach in the repo — exported CSVs, production logs, specs, screenshots of text, snippets. Don't attach repo files; list them in Key files instead — the agent reads those itself. Drag & drop or paste works too. Cleared on reload.",
+      attachRemoveAria: "Remove {name}",
+      attachSomeSkipped: "{n} file(s) skipped — too large or not a text file",
+      welcomeTitle: "Welcome!",
+      welcomeBody: " Start with the Main objective — that's the one field that matters most. Everything else is optional but makes the prompt sharper. Hit Generate Prompt when ready.",
+      welcomeDismissAria: "Dismiss welcome message",
+      dlMd: ".md",
+      dlTxt: ".txt",
+      toastProjectFileDownloaded: "Downloaded {filename} — review and prune before committing",
+      keyFilesLabel: "Key files / entry points",
+      keyFilesPlaceholder: "e.g. src/app.py, routes/api.js, package.json",
+      keyFilesHint: "Optional — files the agent should read first. Grounds the agent in your actual code instead of a generic scan.",
+      helpKeyFilesTitle: "Key files",
+      helpKeyFilesBody: " — list the files the agent should read first; it anchors the prompt to your actual code.",
+      helpAttachTitle: "Reference files",
+      helpAttachBody: " — for material the agent can't reach in the repo (exported data, production logs, specs). Repo files belong in Key files; the agent reads those itself. Drag & drop or paste works too.",
+      helpShareTitle: "Share as link",
+      helpShareBody: " — encodes the whole brief into the URL so a teammate opens the exact same form. Nothing is uploaded; the link carries the data.",
+      responseLangAria: "Agent response language",
+      responseLangAuto: "Reply: Auto",
+      responseLangEn: "Reply: English",
+      responseLangAr: "Reply: Arabic",
+      helpResponseLangTitle: "Reply language",
+      helpResponseLangBody: " — asks the agent to write its summary in Arabic or English (code stays in its original language).",
+      helpAgentsTitle: "Agent cheatsheet",
+      agentCcBody: " — strongest with XML-tagged prompts (auto-selected) and explicit Validation + Definition of Done sections; follows AGENTS/CLAUDE.md conventions and keeps diffs tight when told to.",
+      agentCodexBody: " — best with a compact brief and a clear root-cause flow; responds well to “investigate before acting” and verification commands it can run in the shell.",
+      agentCursorBody: " — strongest at multi-file UI-adjacent edits; benefits from listed key files and constraints that name what must not change.",
+      agentGeminiBody: " — good with plan-first prompts; asks it to explain the plan briefly, then execute with concrete edits and run the project's own checks.",
+      agentGenericBody: " — the generic opener keeps the prompt tool-neutral; pick a specific agent when you want its working-style notes appended.",
     },
     ar: {
       appTitle: "مولّد أوامر البرمجة الاحترافي",
@@ -1168,6 +1454,10 @@
       outputViewAria: "عرض الإخراج",
       viewRaw: "نص خام",
       viewRendered: "معاينة منسّقة",
+      viewCompare: "مقارنة",
+      compareBefore: "قبل — الصياغة السابقة",
+      compareAfter: "بعد — الصياغة الحالية",
+      counterChars: "{chars} حرفًا",
       headingsLangAria: "لغة عناوين الأقسام",
       headingsEn: "عناوين إنجليزية",
       headingsAr: "عناوين عربية",
@@ -1182,7 +1472,7 @@
       helpTaskTypeTitle: "نوع المهمة",
       helpTaskTypeBody: " — اختر نوع أو أكتر يدوياً، أو اتركه فاضي وراح تخمّنه الأداة من يلي كتبته (بيظهر كتلميح مع مستوى ثقة).",
       helpQuickpackTitle: "الحزم السريعة",
-      helpQuickpackBody: " — أسطر متطلبات جاهزة بضغطة وحدة، بتظهر لمهام الأتمتة/الاستخراج (بروكسي، إعادة محاولة، حدود المعدل...).",
+      helpQuickpackBody: " — أسطر متطلبات جاهزة بضغطة وحدة، بتظهر لمهام الأتمتة/الاستخراج وتحليل البيانات (بروكسي، إعادة محاولة، حدود المعدل، فحوص البيانات...).",
       helpComplexityTitle: "التعقيد",
       helpComplexityBody: " — بيتحكم بمقدار التفاصيل بالبرومبت الناتج. تلقائي بيتكيّف حسب مدخلاتك، أو تقدر تفرض Simple/Standard/Complex.",
       helpAgentTitle: "الوكيل المستهدف",
@@ -1230,6 +1520,8 @@
       packRetry: "إعادة المحاولة / Backoff",
       packLeaks: "تسريبات الموارد",
       packSession: "الجلسات / الكوكيز",
+      packDataChecks: "التحقق من المخرجات",
+      packDataMessy: "معالجة البيانات الوسخة",
       quickpackHint: "حزم سريعة — دوس لإضافة سطر متطلب جاهز (دوس مرة ثانية لإزالته).",
       diffsOnlyLabel: "تعديلات جزئية فقط (بدون إعادة كتابة الملف كامل)",
       styleLabel: "قواعد الأسلوب والاتفاقيات",
@@ -1245,6 +1537,67 @@
       toastHistoryLoaded: "تم التحميل من السجل",
       toastHistoryCleared: "تم مسح السجل",
       toastHistoryDeleted: "تم حذف الإدخال",
+      optionalBadge: "(اختياري)",
+      qualityBtn: "فحص الجودة",
+      qualityEmpty: "ولّد الأمر أولاً، ثم شغّل فحص الجودة.",
+      qualityNoTips: "يبدو جيدًا — لا توجد ملاحظات جوهرية.",
+      quality_grounding: "التأصيل",
+      quality_specificity: "التحديد",
+      quality_verifiability: "قابلية التحقق",
+      qualityTip_AddFiles: "أضف ملفات أساسية أو أرفق ملفًا مرجعيًا — تأصيل الوكيل في الكود الحقيقي هو أكبر عامل لتحسين الجودة.",
+      qualityTip_AddKnownProblems: "الصق الخطأ/السجل الفعلي في قسم المشاكل المعروفة ليعيد الوكيل إنتاج المشكلة بدل التخمين.",
+      qualityTip_ObjectiveDetail: "الهدف مختصر — أضف ماذا وأين والسلوك المتوقع حتى لا ينحرف الوكيل.",
+      qualityTip_NoObjective: "لا يوجد هدف بعد — هذا أهم حقل على الإطلاق.",
+      qualityTip_AddRequirements: "اكتب متطلبات ملموسة (متطلب بكل سطر) لتحديد حدود المهمة.",
+      qualityTip_AddExpected: "صف النتيجة النهائية المتوقعة حتى يكون معنى «انتهى» واضحًا لا لبس فيه.",
+      qualityTip_MakeMeasurable: "اجعل النتيجة المتوقعة قابلة للقياس — أرقام أو سلوك مرئي أو فحص يمكن للوكيل تشغيله.",
+      qualityTip_AddValidation: "الأمر لا يحتوي تعليمات تحقق صريحة — قد يتخطى الوكيل خطوة التحقق.",
+      shareBtn: "مشاركة كرابط",
+      toastShareCopied: "تم نسخ رابط المشاركة — كل من يفتحه يرى نفس الأمر",
+      toastShareReady: "رابط المشاركة في شريط العنوان — انسخه من هناك",
+      toastShareTooLong: "هذا الأمر كبير جدًا على رابط مشاركة — اختصر الحقول الطويلة",
+      toastShareFailed: "تعذّر إنشاء رابط المشاركة",
+      toastSnippetAttached: "تم حفظ النص الملصق كمقتطف مرجعي",
+      attachIncludeTitle: "تضمين في الأمر",
+      attachIncludeAria: "تضمين {name} في الأمر",
+      dropOverlayText: "أفلت الملفات لإرفاقها كمادة مرجعية",
+      historySearchPlaceholder: "ابحث في العناوين والنصوص…",
+      historyTypeFilterAria: "تصفية حسب نوع المهمة",
+      historyFilterAll: "كل أنواع المهام",
+      historyNoMatch: "لا توجد إدخالات مطابقة لبحثك",
+      attachLabel: "ملفات مرجعية",
+      attachBtn: "إرفاق ملفات",
+      attachAria: "إرفاق ملفات مرجعية",
+      attachHint: "للمادة التي لا يصل إليها الوكيل داخل المستودع — ملفات CSV مُصدَّرة، سجلات إنتاج، مواصفات، مقتطفات. لا ترفق ملفات المستودع؛ اذكرها في «ملفات أساسية» بدلاً من ذلك — الوكيل يقرأها بنفسه. السحب والإفلات واللصق يعملان أيضًا. تُمسح عند إعادة التحميل.",
+      attachRemoveAria: "إزالة {name}",
+      attachSomeSkipped: "تم تخطي {n} ملف — كبير جدًا أو ليس ملفًا نصيًا",
+      welcomeTitle: "أهلًا بك!",
+      welcomeBody: " ابدأ بالهدف الرئيسي — هذا الحقل الأهم على الإطلاق. كل شيء آخر اختياري لكنه يجعل الأمر أدق. اضغط «توليد الأمر» عندما تجهز.",
+      welcomeDismissAria: "إخفاء رسالة الترحيب",
+      dlMd: ".md",
+      dlTxt: ".txt",
+      toastProjectFileDownloaded: "تم تحميل {filename} — راجعه وقلّصه قبل الالتزام به",
+      keyFilesLabel: "ملفات أساسية / نقاط الدخول",
+      keyFilesPlaceholder: "مثال: src/app.py, routes/api.js, package.json",
+      keyFilesHint: "اختياري — ملفات يقرأها الوكيل أولاً؛ تربط الأمر بكودك الفعلي بدل بحث عام.",
+      helpKeyFilesTitle: "الملفات الأساسية",
+      helpKeyFilesBody: " — حدد الملفات التي يقرأها الوكيل أولاً؛ يربط الأمر بكودك الفعلي.",
+      helpAttachTitle: "الملفات المرجعية",
+      helpAttachBody: " — للمادة التي لا يصل إليها الوكيل داخل المستودع (بيانات مُصدَّرة، سجلات إنتاج، مواصفات). ملفات المستودع مكانها «ملفات أساسية»؛ الوكيل يقرأها بنفسه. السحب والإفلات واللصق يعملان أيضًا.",
+      helpShareTitle: "مشاركة كرابط",
+      helpShareBody: " — يضمّن الأمر كاملًا في الرابط فيفتحه زميلك على نفس النموذج تمامًا. لا يُرفع شيء؛ الرابط نفسه يحمل البيانات.",
+      responseLangAria: "لغة رد الوكيل",
+      responseLangAuto: "الرد: تلقائي",
+      responseLangEn: "الرد: الإنجليزية",
+      responseLangAr: "الرد: العربية",
+      helpResponseLangTitle: "لغة الرد",
+      helpResponseLangBody: " — يطلب من الوكيل كتابة ملخصه بالعربية أو الإنجليزية (يبقى الكود بلغته الأصلية).",
+      helpAgentsTitle: "دليل الوكلاء",
+      agentCcBody: " — الأقوى مع أوامر وسوم XML (تُختار تلقائيًا) وأقسام التحقق وتعريف الإنجاز الصريحة؛ يلتزم باتفاقيات AGENTS/CLAUDE.md ويُبقي التعديلات مُحكمة عند إخباره بذلك.",
+      agentCodexBody: " — الأفضل مع موجز مختصر وتدفق واضح لسبب المشكلة؛ يستجيب جيدًا لـ«تحقق قبل التنفيذ» وأوامر التحقق التي يمكن تشغيلها في الطرفية.",
+      agentCursorBody: " — الأقوى في التعديلات المتعددة الملفات القريبة من الواجهة؛ يستفيد من قائمة الملفات الأساسية والقيود التي تسمي ما يجب ألا يتغير.",
+      agentGeminiBody: " — جيد مع الأوامر التي تبدأ بخطة؛ اطلب منه شرح الخطة باختصار ثم التنفيذ بتعديلات ملموسة وتشغيل فحوص المشروع نفسها.",
+      agentGenericBody: " — المقدمة العامة تُبقي الأمر محايدًا بلا أدوات؛ اختر وكيلًا محددًا عندما تريد إضافة ملاحظات أسلوب عمله.",
     }
   };
 
@@ -1263,67 +1616,67 @@
     bugfix: {
       label: "Bug Fix", labelAr: "إصلاح خطأ", roleNote: "a bug fix",
       focus: "For this bug fix, prioritize: reproducing the issue, isolating the root cause, applying a minimal fix, then testing for regressions.",
-      keywords: ["a bug","is broken","crashes when","doesn't work","not working","stopped working","throws an exception","throws an error","is failing","fails when","this is a defect","خطأ في","عطل في","ما يشتغل","ما بيشتغل","في مشكلة","كراش"],
+      keywords: ["a bug","is broken","crashes when","doesn't work","not working","stopped working","throws an exception","throws an error","is failing","fails when","this is a defect","crashes","crashed","is crashing","freezes","hangs","is stuck","wrong value","returns wrong","incorrect result","fails","failing","broken after","خطأ في","عطل في","ما يشتغل","ما بيشتغل","في مشكلة","كراش","بيتعطل","تعطل","بيعلّق","بيجمّد","خلل","مش مشتغل","توقف عن"],
       validationExtra: ["Reproduce the original issue before considering it fixed.", "Confirm the reported symptom no longer occurs."]
     },
     feature: {
       label: "Large Feature", labelAr: "ميزة كبيرة", roleNote: "a large feature",
       focus: "For this feature, prioritize: mapping the relevant architecture, identifying dependencies, implementing the feature, integrating it cleanly, then testing thoroughly.",
-      keywords: ["add a feature","new feature","implement a new","build a new","add support for","support for adding","إضافة ميزة","ميزة جديدة","نفذ ميزة","اضافة خاصية"],
+      keywords: ["add a feature","new feature","implement a new","build a new","add support for","support for adding","implement support","add capability","إضافة ميزة","ميزة جديدة","نفذ ميزة","اضافة خاصية","أضف ميزة","أريد إضافة","إضافة خاصية","خاصية جديدة"],
       validationExtra: ["Verify the new functionality works end-to-end through the existing UI/API.", "Confirm it integrates correctly with existing features."]
     },
     refactor: {
       label: "Refactoring", labelAr: "إعادة هيكلة", roleNote: "a refactor",
       focus: "For this refactor, prioritize: preserving existing behavior exactly, understanding the current architecture, cleaning up the implementation, then testing for regressions.",
-      keywords: ["refactor","clean up the code","cleanup the code","restructure the","reorganize the code","messy code","technical debt","إعادة هيكلة","تنظيف الكود"],
+      keywords: ["refactor","clean up the code","cleanup the code","restructure the","reorganize the code","messy code","technical debt","refactoring","clean up","tidy up the","simplify the code","decouple","split the file","extract function","إعادة هيكلة","تنظيف الكود","تبسيط الكود","تنظيم الكود"],
       validationExtra: ["Confirm behavior is identical to before the refactor.", "Check that no public interfaces changed unintentionally."]
     },
     performance: {
       label: "Performance Optimization", labelAr: "تحسين الأداء", roleNote: "a performance optimization",
       focus: "For this performance task, prioritize: profiling to find the actual bottleneck, verifying the hypothesis with data, applying a targeted optimization, then measuring the improvement without regressing correctness.",
-      keywords: ["is slow","performance issue","high latency","optimi","speed it up","make it faster","bottleneck","laggy","high cpu usage","memory usage is","بطيء","تحسين الأداء","استهلاك الذاكرة","استهلاك المعالج"],
+      keywords: ["is slow","performance issue","high latency","optimi","speed it up","make it faster","bottleneck","laggy","high cpu usage","memory usage is","slower","slowness","takes too long","speed up","optimization","optimize","optimise","faster","leaks memory","بطيء","بطيئة","بطء","تحسين الأداء","أسرع","يعلق بسبب","ثقيل جدا"],
       validationExtra: ["Benchmark the relevant path before and after the change.", "Confirm the change does not regress correctness or noticeably increase resource usage."]
     },
     security: {
       label: "Security Audit", labelAr: "تدقيق أمني", roleNote: "a security audit",
       focus: "For this security task, prioritize: identifying attack surfaces and trust boundaries, auditing for known vulnerability classes, applying fixes with the least privilege necessary, then verifying the fix does not weaken usability or break existing functionality.",
-      keywords: ["security issue","vulnerab","exploit","sql injection","xss","csrf","auth bypass","insecure","ثغرة أمنية","اختراق","تعزيز الأمان"],
+      keywords: ["security issue","vulnerab","exploit","sql injection","xss","csrf","auth bypass","insecure","vulnerabilities","vulnerability","injection","sanitize","unauthorized access","access control","plaintext password","api key exposed","encrypted","least privilege","ثغرة أمنية","ثغرات","اختراق","تعزيز الأمان","صلاحيات","تشفير"],
       validationExtra: ["Confirm the fix does not introduce new attack surface.", "Verify legitimate usage still works after the fix."]
     },
     newproject: {
       label: "New Project", labelAr: "مشروع جديد", roleNote: "a new project",
       focus: "For this new project, prioritize: establishing a clean and conventional project structure, setting up the core architecture deliberately, implementing the initial functionality, then validating the setup end-to-end.",
-      keywords: ["new project","from scratch","bootstrap a","scaffold a","start a new project","set up a new project","مشروع جديد","من الصفر"],
+      keywords: ["new project","from scratch","bootstrap a","scaffold a","start a new project","set up a new project","starting fresh","create a project","build me a","مشروع جديد","من الصفر","إنشاء مشروع","ابدأ مشروع"],
       validationExtra: ["Confirm the project builds and runs successfully end-to-end.", "Verify the initial structure follows the stack's normal conventions."]
     },
     review: {
       label: "Full Codebase Review", labelAr: "مراجعة شاملة للكود", roleNote: "a full codebase review",
       focus: "For this review, prioritize: systematically walking the codebase by area, documenting findings with concrete file and line references, distinguishing critical issues from minor ones, then summarizing actionable next steps.",
-      keywords: ["code review","review the codebase","audit the code","full review of","review this project","مراجعة الكود","تدقيق الكود"],
+      keywords: ["code review","review the codebase","audit the code","full review of","review this project","review my code","codebase audit","quality review","review the whole","مراجعة الكود","تدقيق الكود","راجع الكود","مراجعة شاملة"],
       validationExtra: ["Reference specific files and line numbers for each finding.", "Separate critical issues from minor or stylistic ones."]
     },
     ui: {
       label: "UI / UX", labelAr: "واجهة/تجربة المستخدم", roleNote: "a UI/UX improvement",
       focus: "For this UI/UX task, prioritize: matching existing design patterns and components, verifying the change across realistic screen sizes, keeping interactions accessible and consistent with the rest of the interface, then testing the result visually and interactively.",
-      keywords: ["user interface","ui design","ui component","layout issue","css styling","responsive design","the button looks","screen layout","واجهة المستخدم","تصميم الواجهة","تنسيق الصفحة"],
+      keywords: ["user interface","ui design","ui component","layout issue","css styling","responsive design","the button looks","screen layout","user experience","ux","alignment is","colors look","font size","styling","visual bug","واجهة المستخدم","تصميم الواجهة","تنسيق الصفحة","شكل الصفحة","الألوان","الخط"],
       validationExtra: ["Verify the visual result across the relevant screen sizes.", "Test the interactive behavior manually."]
     },
     api: {
       label: "API / Backend", labelAr: "واجهة برمجية / الخلفية", roleNote: "API/backend work",
       focus: "For this API task, prioritize: understanding the existing request/response contract, maintaining backward compatibility for existing consumers, validating input and error handling, then testing success, invalid-input, and failure cases.",
-      keywords: ["rest api","graphql api","the api","an api","api endpoint","backend route","http request","api response","نقطة نهاية","واجهة برمجية"],
+      keywords: ["rest api","graphql api","the api","an api","api endpoint","backend route","http request","api response","endpoint returns","server route","http status","api call","request handler","نقطة نهاية","واجهة برمجية","الخادم","طلب http"],
       validationExtra: ["Test successful requests, invalid input, and failure cases.", "Confirm backward compatibility with existing consumers."]
     },
     database: {
       label: "Database", labelAr: "قاعدة البيانات", roleNote: "database work",
       focus: "For this database task, prioritize: understanding the existing schema and data relationships, preserving data integrity, considering migration/rollback safety for any schema change, then verifying the result against realistic data.",
-      keywords: ["the database","db schema","database schema","sql query","query is slow","database migration","قاعدة بيانات","استعلام قاعدة البيانات"],
+      keywords: ["the database","db schema","database schema","sql query","query is slow","database migration","sqlite","postgres","mysql","mongodb","the table","add a column","foreign key","index the","قاعدة بيانات","استعلام قاعدة البيانات","جدول قاعدة","عمود جديد","فهرس"],
       validationExtra: ["Verify data integrity after the change.", "Check query behavior/performance on realistic data volume."]
     },
     automation: {
       label: "Automation / Scraping", labelAr: "أتمتة / استخراج بيانات", roleNote: "an automation or scraping task",
       focus: "For this automation task, first identify what actually blocks or slows the run today (network calls, sequential waits, resource contention) before changing anything. Prioritize: handling timeouts, retries, and unavailable resources gracefully, respecting rate limits, avoiding unnecessary load on external services, cleaning up resources on failure, then testing the success path and the realistic failure cases below.",
-      keywords: ["automation script","a bot that","a scraper","web scraping","selenium","puppeteer","playwright","cron job","browser automation","بوت","سكرابر","أتمتة"],
+      keywords: ["automation script","a bot that","a scraper","web scraping","selenium","puppeteer","playwright","cron job","browser automation","scrape the","scraping the","automate the","scheduled task","headless browser","بوت","سكرابر","أتمتة","كشط","يجمع البيانات تلقائيا"],
       validationExtra: [
         "Test the success path end-to-end with realistic input.",
         "Test behavior when a request times out or the target is unreachable.",
@@ -1336,44 +1689,54 @@
     testing: {
       label: "Testing", labelAr: "الاختبار", roleNote: "writing or improving tests",
       focus: "For this testing task, prioritize: covering the actual behavior being tested rather than trivial cases, ensuring new tests fail without the fix/feature and pass with it, then confirming the tests run cleanly in the existing test setup.",
-      keywords: ["write tests","add tests for","test coverage","unit test","integration test","write unit tests","اختبارات","تغطية اختبار","كتابة اختبارات"],
+      keywords: ["write tests","add tests for","test coverage","unit test","integration test","write unit tests","write a test","test suite","pytest","jest","vitest","coverage is","اختبارات","تغطية اختبار","كتابة اختبارات","اكتب اختبار","اختبار وحدة"],
       validationExtra: ["Confirm the new tests fail without the fix/feature and pass with it.", "Check the tests run cleanly in the existing test setup."]
     },
     deployment: {
       label: "Deployment / DevOps", labelAr: "النشر / DevOps", roleNote: "a deployment/DevOps task",
       focus: "For this deployment task, prioritize: reproducing the deployment in a clean environment, minimizing manual/undocumented steps, ensuring a rollback path exists, then verifying the deployed result actually works end-to-end.",
-      keywords: ["deploy the","deployment process","ci/cd","build pipeline","dockerfile","docker image","release process","hosting setup","نشر المشروع","دبلوي","خط الأنابيب"],
+      keywords: ["deploy the","deployment process","ci/cd","build pipeline","dockerfile","docker image","release process","hosting setup","deploy to production","github actions","vercel","netlify","railway","heroku","kubernetes","docker compose","نشر المشروع","دبلوي","خط الأنابيب","رفع على السيرفر"],
       validationExtra: ["Verify the deployment/build succeeds from a clean environment.", "Confirm a rollback path exists if the deployment fails."]
     },
     localization: {
       label: "Localization", labelAr: "التعريب", roleNote: "a localization task",
       focus: "For this localization task, prioritize: preserving meaning and tone across languages, handling text direction/encoding correctly where relevant (e.g. RTL), keeping untranslated strings from breaking the UI, then verifying the result renders correctly in context.",
-      keywords: ["localization","localize the","rtl support","arabic text","i18n","language support","تعريب","دعم اللغة العربية","دعم الاتجاه من اليمين لليسار"],
+      keywords: ["localization","localize the","rtl support","arabic text","i18n","language support","translate the ui","translate the interface","arabic language","تعريب","دعم اللغة العربية","دعم الاتجاه من اليمين لليسار","تعريب الواجهة","اللغة العربية"],
       validationExtra: ["Verify translated text renders correctly, including RTL/encoding where relevant.", "Confirm untranslated strings fall back sensibly."]
     },
     translation: {
       label: "Translation / Proofreading & Editing", labelAr: "ترجمة وتدقيق وتحرير", roleNote: "a translation, proofreading, or editing task",
       focus: "For this task, prioritize: preserving meaning, tone, and register faithfully, keeping terminology consistent with any glossary or prior translations already in the project, respecting existing style conventions, then reviewing the result for natural fluency rather than literal word-for-word matching.",
-      keywords: ["translate this text","translate the text","proofread the translation","edit the translation","improve the translation","fix the wording","translation quality","terminology consistency","ترجم هذا النص","ترجمة النص","دقق الترجمة","حرر الترجمة","حسّن الترجمة","اتساق المصطلحات","جودة الترجمة","راجع الترجمة","تدقيق لغوي","مراجعة لغوية"],
+      keywords: ["translate this text","translate the text","proofread the translation","edit the translation","improve the translation","fix the wording","translation quality","terminology consistency","translate this","translate it to","proofread this","ترجم هذا النص","ترجمة النص","دقق الترجمة","حرر الترجمة","حسّن الترجمة","اتساق المصطلحات","جودة الترجمة","راجع الترجمة","تدقيق لغوي","مراجعة لغوية","ترجم لي","ترجم النص"],
       validationExtra: ["Check terminology consistency against the project's existing glossary or prior translations.", "Confirm the result reads naturally in the target language rather than like a literal translation."]
     },
     documentation: {
       label: "Documentation", labelAr: "التوثيق", roleNote: "a documentation task",
       focus: "For this documentation task, prioritize: describing the actual current behavior rather than the intended behavior, keeping instructions concrete and followable, then verifying the documented steps actually work when followed literally.",
-      keywords: ["write documentation","documentation for","write docs","readme file","usage guide","api docs","دليل الاستخدام","توثيق المشروع"],
+      keywords: ["write documentation","documentation for","write docs","readme file","usage guide","api docs","write a readme","user guide","installation guide","دليل الاستخدام","توثيق المشروع","اكتب توثيق","ملف توثيق"],
       validationExtra: ["Confirm the documentation matches the actual current behavior.", "Check that setup/usage steps work when followed literally."]
     },
     migration: {
       label: "Migration / Integration", labelAr: "الترحيل / الدمج", roleNote: "a migration or integration task",
       focus: "For this migration task, prioritize: understanding both the source and target systems/versions, preserving existing functionality and data during the transition, ensuring a rollback plan if the migration fails partway, then verifying the result end-to-end after the change.",
-      keywords: ["migrate to","migration to","upgrade to version","port this to","integrate with","switch to a different","نقل المشروع","ترحيل البيانات","دمج مع"],
+      keywords: ["migrate to","migration to","upgrade to version","port this to","integrate with","switch to a different","migrate from","migrating","upgrade the","integration with","نقل المشروع","ترحيل البيانات","دمج مع","الترحيل إلى","ترقية الإصدار"],
       validationExtra: ["Verify existing functionality still works after the migration.", "Confirm a rollback plan exists if it fails partway."]
     },
     research: {
       label: "Research", labelAr: "البحث", roleNote: "a research or investigation task",
       focus: "For this research task, prioritize: basing conclusions on verifiable sources or actual measurements rather than assumption, clearly separating findings from recommendations, then presenting the trade-offs of each option considered.",
-      keywords: ["research the","investigate the","compare options","evaluate options","which is better","find the best approach","ابحث عن","مقارنة بين الخيارات"],
+      keywords: ["research the","investigate the","compare options","evaluate options","which is better","find the best approach","what are the options","pros and cons","trade-offs","قارن بين","أفضل حل","إيجابيات وسلبيات"],
       validationExtra: ["Base conclusions on verifiable sources or actual measurements, not assumption.", "Clearly separate findings from recommendations."]
+    },
+    data: {
+      label: "Data Analysis / Script", labelAr: "تحليل بيانات / سكربت", roleNote: "a data analysis or scripting task",
+      focus: "For this data analysis/scripting task, prioritize: profiling the actual input data (schema, types, sizes, encoding, nulls, duplicates) before writing logic, verifying every conclusion against real data values, handling malformed and missing data explicitly, then validating outputs against independently computed checks rather than assuming correctness.",
+      keywords: ["analyze the data","data analysis","analyse the data","analyze data","analyze a dataset","clean the data","data cleaning","data processing","aggregate the","summary statistics","correlation","regression","csv file","excel file","json data","parse the csv","transform the data","visualize the data","chart the","plot the","pivot table","dataset of","سجل البيانات","تحليل البيانات","تنظيف البيانات","معالجة البيانات","ملف إكسل","ملف csv","رسم بياني","إحصائيات"],
+      validationExtra: [
+        "Validate output counts, totals, and schemas against independently computed checks, not against the same code producing them.",
+        "Test with real (or realistic) input data including malformed rows, empty files, and encoding edge cases.",
+        "Confirm numeric precision and rounding behave as intended, with no silent data loss."
+      ]
     }
   };
 
@@ -1399,7 +1762,8 @@
     translation: ["minimal"],
     documentation: ["testing"],
     migration: ["regression", "testing"],
-    research: ["arch"]
+    research: ["arch"],
+    data: ["edge", "testing"]
   };
 
   var TARGET_AGENTS = {
@@ -1448,11 +1812,14 @@
     "OBJECTIVE": "الهدف",
     "EXPECTED RESULT": "النتيجة المتوقعة",
     "PROJECT & CONTEXT": "المشروع والسياق",
-    "REQUIREMENTS": "المتطلبات",
-    "KNOWN PROBLEMS": "المشاكل المعروفة",
     "CONSTRAINTS": "القيود",
+    "KNOWN PROBLEMS": "المشاكل المعروفة",
+    "REQUIREMENTS": "المتطلبات",
     "PRIORITIES": "الأولويات",
     "AGENT NOTES": "ملاحظات الوكيل",
+    "WORKING RULES": "قواعد العمل",
+    "CONTEXT FILES": "ملفات السياق",
+    "ATTACHED FILES": "الملفات المرفقة",
     "TERMINOLOGY": "المصطلحات",
     "EXECUTION PROCESS": "خطوات التنفيذ",
     "VALIDATION": "التحقق",
@@ -1461,21 +1828,103 @@
     "FINAL RESPONSE FORMAT": "شكل الرد النهائي"
   };
 
+  // Phrases worth double weight — a single strong phrase signals a confident detection.
+  var STRONG_KEYWORDS = {
+    bugfix: ["crashes when", "stopped working", "throws an exception", "throws an error", "doesn't work", "not working"],
+    feature: ["add a feature", "new feature", "add support for"],
+    refactor: ["refactor", "technical debt"],
+    performance: ["is slow", "bottleneck", "speed it up", "make it faster"],
+    security: ["sql injection", "auth bypass", "security issue", "vulnerab"],
+    newproject: ["from scratch", "new project"],
+    review: ["code review", "codebase audit"],
+    ui: ["responsive design", "ui design", "user experience"],
+    api: ["rest api", "api endpoint"],
+    database: ["database schema", "query is slow", "database migration"],
+    automation: ["web scraping", "a scraper", "browser automation"],
+    testing: ["write tests", "unit test", "test coverage"],
+    deployment: ["ci/cd", "dockerfile", "deploy to production"],
+    data: ["data analysis", "analyze the data", "data cleaning"],
+    translation: ["translate this", "proofread"],
+    research: ["compare options", "pros and cons"]
+  };
+
+  // Singular/plural robustness: match "unit tests" via "unit test" and vice versa.
+  function keywordVariants(kw){
+    var variants = [kw];
+    if(/[a-z]s$/.test(kw)){
+      variants.push(kw.slice(0, -1));
+    } else if(/[a-z]$/.test(kw) && kw.length > 2){
+      variants.push(kw + "s");
+    }
+    return variants;
+  }
+
   function detectTaskType(text){
     if(!text) return { key: null, score: 0 };
     var lower = text.toLowerCase();
     var bestKey = null, bestScore = 0;
     Object.keys(TASK_TYPES).forEach(function(key){
+      var strong = STRONG_KEYWORDS[key] || [];
       var score = 0;
       TASK_TYPES[key].keywords.forEach(function(kw){
-        if(lower.indexOf(kw.toLowerCase()) !== -1) score += 1;
+        var weight = strong.indexOf(kw) !== -1 ? 2 : 1;
+        var matched = keywordVariants(kw).some(function(v){
+          return lower.indexOf(v.toLowerCase()) !== -1;
+        });
+        if(matched) score += weight; // count each keyword once, even if several variants match
       });
       if(score > bestScore){ bestScore = score; bestKey = key; }
     });
     return { key: bestScore > 0 ? bestKey : null, score: bestScore };
   }
 
-  var PRIORITY_TEXT = {
+  // Sample-based self-test for the detector. Returns {pass, fail} counts; failures carry details.
+  function detectSelfTest(){
+    var samples = [
+      { text: "The export button crashes when the file is large", expect: "bugfix" },
+      { text: "The app stopped working after the last update", expect: "bugfix" },
+      { text: "Login throws an exception on wrong password", expect: "bugfix" },
+      { text: "The scraper doesn't work anymore, it returns wrong values", expect: "bugfix" },
+      { text: "في مشكلة في الصفحة الرئيسية، ما يشتغل الزر", expect: "bugfix" },
+      { text: "Add a feature that exports reports to PDF", expect: "feature" },
+      { text: "I want to add support for Arabic localization in the settings screen", expect: "feature" },
+      { text: "Refactor the utils module, it is messy code full of technical debt", expect: "refactor" },
+      { text: "The dashboard is slow, make it faster", expect: "performance" },
+      { text: "There is a bottleneck in the image processing pipeline", expect: "performance" },
+      { text: "Check the app for sql injection vulnerabilities", expect: "security" },
+      { text: "Build me a new project from scratch for inventory management", expect: "newproject" },
+      { text: "Do a full code review of this repository", expect: "review" },
+      { text: "The mobile layout issue: buttons overlap on small screens, css styling is off", expect: "ui" },
+      { text: "Add an api endpoint that returns user statistics", expect: "api" },
+ { text: "The database migration failed and the schema is inconsistent", expect: "database" },
+      { text: "Write a scraper with playwright that downloads daily prices", expect: "automation" },
+      { text: "Write unit tests for the auth module and improve test coverage", expect: "testing" },
+      { text: "Set up ci/cd with a dockerfile for the backend", expect: "deployment" },
+      { text: "Analyze the data in sales.csv and give me summary statistics", expect: "data" },
+      { text: "Clean the data and remove duplicates, then aggregate the results", expect: "data" },
+      { text: "تحليل البيانات في ملف الإكسل وأخرج إحصائيات", expect: "data" },
+      { text: "Translate this text to Arabic and proofread the translation", expect: "translation" },
+      { text: "Migrate to the new ORM and integrate with the billing service", expect: "migration" },
+      { text: "Compare options for state management and tell me which is better", expect: "research" },
+      { text: "Write documentation and a readme file for the setup steps", expect: "documentation" },
+      { text: "Support rtl in the settings page for the arabic language", expect: "localization" },
+      { text: "Nothing to detect here, just a friendly hello", expect: null },
+      { text: "", expect: null },
+      { text: "Add a column to the users table and index the email field", expect: "database" },
+      { text: "Fix the bug in the scraper that fails when the site blocks us, then write tests for it", expect: "bugfix" },
+      { text: "Deploy the new release to production and verify the deployment process", expect: "deployment" }
+    ];
+    var pass = 0, failures = [];
+    samples.forEach(function(s, i){
+      var got = detectTaskType(s.text).key;
+      if(got === s.expect){ pass += 1; }
+      else { failures.push({ index: i, text: s.text, expected: s.expect, got: got }); }
+    });
+    return { pass: pass, total: samples.length, failures: failures };
+  }
+
+  // Pre-audit wording kept for the Compare (before/after) view.
+  var PRIORITY_TEXT_LEGACY = {
     arch:        "Fully understand the existing architecture before writing any code.",
     minimal:     "Prefer the smallest, most minimal change that correctly achieves the objective.",
     robust:      "Deliver a robust, production-grade solution rather than a quick patch.",
@@ -1486,7 +1935,96 @@
     performance: "Consider the performance implications of the implementation."
   };
 
-  var FIELD_IDS = ["projectName","techStack","styleConventions","currentState","extraContext","objective","expectedResult","requirements","constraints","glossary","knownProblems"];
+  var PRIORITY_TEXT = {
+    arch:        "Fully understand the existing architecture before writing any code. If it is unclear from a first pass, investigate until it is clear — do not build on assumptions.",
+    minimal:     "Prefer the smallest, most minimal change that correctly achieves the objective; every line you touch is a line that must be re-verified.",
+    robust:      "Deliver a robust, production-grade solution rather than a quick patch: handle failure modes explicitly and leave the code maintainable.",
+    testing:     "Testing and validation are a priority: verify the change thoroughly before considering it done, and add or update tests where the project's conventions support them.",
+    edge:        "Explicitly consider and handle relevant edge cases: empty or invalid input, boundary values, and resource exhaustion where they apply.",
+    regression:  "Actively guard against regressions: identify which existing behaviors your change could disturb, and verify each of them.",
+    security:    "Treat security as a priority throughout: validate inputs, apply least privilege, and never trust data crossing a trust boundary.",
+    performance: "Consider the performance implications of the implementation: avoid obvious hot-path costs, and justify any performance trade-off you accept."
+  };
+
+  var FIELD_IDS = ["projectName","techStack","styleConventions","currentState","extraContext","objective","expectedResult","requirements","constraints","glossary","knownProblems","keyFiles"];
+
+  // ---- Reference files (in-memory only; never uploaded, never persisted) ----
+  var ATTACH_MAX_BYTES = 200 * 1024;      // per-file cap: prompts should stay focused
+  var ATTACH_MAX_TOTAL = 500 * 1024;      // overall cap: keep the final prompt usable
+  var attachedFiles = [];                  // [{name, size, text, excluded?}]
+  var ATTACH_SKIP_PATTERNS = [/\.png$/i, /\.jpe?g$/i, /\.gif$/i, /\.webp$/i, /\.ico$/i, /\.pdf$/i, /\.zip$/i, /\.gz$/i, /\.tar$/i, /\.exe$/i, /\.dll$/i, /\.so$/i, /\.dylib$/i, /\.woff2?$/i, /\.ttf$/i, /\.eot$/i, /\.mp[34]$/i, /\.mov$/i, /\.avi$/i, /\.class$/i, /\.jar$/i, /\.pyc$/i, /\.o$/i, /\.bin$/i];
+
+  function renderAttachChips(){
+    var wrap = document.getElementById("attachChips");
+    if(!wrap) return;
+    wrap.innerHTML = "";
+    attachedFiles.forEach(function(f, idx){
+      var chip = document.createElement("span");
+      chip.className = "attach-chip" + (f.excluded ? " excluded" : "");
+      var inc = document.createElement("input");
+      inc.type = "checkbox";
+      inc.className = "chip-inc";
+      inc.checked = !f.excluded;
+      inc.title = t("attachIncludeTitle");
+      inc.setAttribute("aria-label", t("attachIncludeAria", { name: f.name }));
+      inc.addEventListener("change", function(){
+        f.excluded = !inc.checked;
+        chip.classList.toggle("excluded", f.excluded);
+        if(isLivePreviewOn()){ regenerateOutput(); }
+      });
+      var name = document.createElement("span");
+      name.className = "chip-name";
+      name.textContent = f.name;
+      name.title = f.name;
+      var size = document.createElement("span");
+      size.className = "chip-size";
+      size.textContent = (f.size / 1024).toFixed(1) + " KB";
+      var del = document.createElement("button");
+      del.type = "button";
+      del.className = "chip-del";
+      del.textContent = "✕";
+      del.setAttribute("aria-label", t("attachRemoveAria", { name: f.name }));
+      del.addEventListener("click", function(){
+        attachedFiles.splice(idx, 1);
+        renderAttachChips();
+        if(isLivePreviewOn()){ regenerateOutput(); }
+      });
+      chip.appendChild(inc); chip.appendChild(name); chip.appendChild(size); chip.appendChild(del);
+      wrap.appendChild(chip);
+    });
+  }
+
+  function addAttachedFiles(fileList){
+    var added = 0, skipped = [];
+    Array.prototype.slice.call(fileList).forEach(function(file){
+      if(ATTACH_SKIP_PATTERNS.some(function(re){ return re.test(file.name); })){ skipped.push(file.name); return; }
+      if(attachedFiles.some(function(f){ return f.name === file.name && f.size === file.size; })) return; // dedupe
+      if(file.size > ATTACH_MAX_BYTES){ skipped.push(file.name); return; }
+      var totalAfter = attachedFiles.reduce(function(acc, f){ return acc + f.size; }, 0) + file.size;
+      if(totalAfter > ATTACH_MAX_TOTAL){ skipped.push(file.name); return; }
+      var reader = new FileReader();
+      reader.onload = function(){
+        attachedFiles.push({ name: file.name, size: file.size, text: String(reader.result) });
+        renderAttachChips();
+        if(isLivePreviewOn()){ regenerateOutput(); }
+      };
+      reader.onerror = function(){ skipped.push(file.name); };
+      reader.readAsText(file);
+    });
+    if(skipped.length){
+      showToast(t("attachSomeSkipped", { n: skipped.length }));
+    }
+  }
+
+  function buildAttachedFilesSection(){
+    var included = attachedFiles.filter(function(f){ return !f.excluded; });
+    if(!included.length) return null;
+    var parts = included.map(function(f){
+      return "```(" + f.name + ")\n" + f.text + "\n```";
+    });
+    return "Reference material the agent cannot reach on its own (exports, logs, specs, snippets) — treat it as ground truth for this task:\n\n" + parts.join("\n\n");
+  }
+
   var DRAFT_KEY = "epg_draft_v1";
   var PREFS_KEY = "epg_prefs_v1";
   var TEMPLATES_KEY = "epg_templates_v1";
@@ -1516,7 +2054,7 @@
     return lines.map(function(l){ return "- " + l; }).join("\n");
   }
 
-  function buildGenericExecution(tier, grounding){
+  function buildGenericExecution(tier, grounding, legacy){
     grounding = grounding || {};
     var agentsMdCheck = "If an AGENTS.md, CLAUDE.md, or similar agent-instructions file exists in this repository, read it first and follow its conventions.";
     if(tier === "simple"){
@@ -1543,16 +2081,26 @@
     return "Understand the project:\n" +
       bulletList(understandFull) +
       "\n\nPlan the implementation:\n" +
-      bulletList([
+      bulletList(legacy ? [
         "Determine the correct implementation approach given the current architecture.",
         "Prefer the smallest correct solution — do not rewrite working systems unnecessarily.",
         "Identify related or adjacent systems that could be affected by this change."
+      ] : [
+        "Determine the correct implementation approach given the current architecture.",
+        "Before writing code, write out your plan briefly and follow it; adapt it if you discover something that invalidates it.",
+        "Prefer the smallest correct solution — do not rewrite working systems unnecessarily.",
+        "If the objective, expected result, or constraints are ambiguous or contradictory, surface the ambiguity and either resolve it from evidence in the repo or ask before guessing."
       ]) +
       "\n\nImplement the change:\n" +
-      bulletList([
+      bulletList(legacy ? [
         "Do not modify unrelated files.",
         "Integrate the implementation with the existing architecture and conventions rather than working around them.",
         "Consider edge cases relevant to the objective."
+      ] : [
+        "Do not modify unrelated files.",
+        "Integrate the implementation with the existing architecture and conventions rather than working around them.",
+        "Consider edge cases relevant to the objective.",
+        "Work through the plan as a checklist; before finishing, confirm each item is done or explicitly note the ones that are not."
       ]);
   }
 
@@ -1647,7 +2195,8 @@
     return name;
   }
 
-  function buildPrompt(){
+  function buildPrompt(opts){
+    var legacy = !!(opts && opts.legacy);
     var projectName = val("projectName");
     var techStack = val("techStack");
     var styleConventions = val("styleConventions");
@@ -1678,9 +2227,17 @@
     var agentKey = document.getElementById("targetAgent").value;
     var agent = TARGET_AGENTS[agentKey] || TARGET_AGENTS.generic;
 
+    // ---- Response language (auto defaults to the UI language) ----
+    var responseLangEl = document.getElementById("responseLang");
+    var responseLangPref = responseLangEl ? responseLangEl.value : "auto";
+    var responseLang = responseLangPref === "ar" || (responseLangPref === "auto" && currentLang === "ar") ? "ar" : "en";
+
     // ROLE
     var role = agent.opener + " Operate with the judgment, care, and diligence expected of a senior engineer: understand the project before changing it, prefer the smallest correct solution, and take full ownership of the quality, correctness, and safety of your changes." +
       "\n\nThis prompt does not prescribe exact implementation steps. You are expected to understand the project, determine the correct implementation, execute it, validate it, and review the result against the Definition of Done below.";
+    if(responseLang === "ar"){
+      role += "\n\nWrite your final response and summaries in Arabic; keep code, identifiers, file paths, and error messages in their original language.";
+    }
     if(taskKeys.length){
       var roleNotes = taskKeys.map(function(k){ return TASK_TYPES[k].roleNote; });
       var roleNotesStr = roleNotes.length === 1
@@ -1726,14 +2283,18 @@
       : "Preserve all existing functionality, architecture, and public interfaces unless the objective specifically requires changing them.";
 
     // PRIORITIES
+    var priorityTexts = legacy ? PRIORITY_TEXT_LEGACY : PRIORITY_TEXT;
     var prioritiesText = checkedPriorities.length
-      ? bulletList(checkedPriorities.map(function(k){ return PRIORITY_TEXT[k]; }))
+      ? bulletList(checkedPriorities.map(function(k){ return priorityTexts[k]; }))
       : null;
 
     // EXECUTION PROCESS — evidence/root-cause-first flow for bug/perf/security, generic flow otherwise
     var grounding = { hasCurrentState: !!currentState, hasKnownProblems: !!knownProblems };
-    var useEvidenceFlow = !manualKeys.length && detectedKey && EVIDENCE_FLOW_TASK_TYPES.indexOf(detectedKey) !== -1;
-    var execution = useEvidenceFlow ? buildEvidenceExecution(tier, grounding) : buildGenericExecution(tier, grounding);
+    var taskKeysForEvidenceFlow = manualKeys.length ? manualKeys : (detectedKey ? [detectedKey] : []);
+    var useEvidenceFlow = legacy
+      ? (!manualKeys.length && !!detectedKey && EVIDENCE_FLOW_TASK_TYPES.indexOf(detectedKey) !== -1)
+      : taskKeysForEvidenceFlow.some(function(k){ return EVIDENCE_FLOW_TASK_TYPES.indexOf(k) !== -1; });
+    var execution = useEvidenceFlow ? buildEvidenceExecution(tier, grounding) : buildGenericExecution(tier, grounding, legacy);
     if(styleConventions){
       execution += "\n\nFollow the project's style/conventions: " + styleConventions;
     }
@@ -1767,7 +2328,11 @@
       var tt = TASK_TYPES[k];
       if(tt.validationExtra){ tt.validationExtra.forEach(function(v){ validationPoints.push(v); }); }
     });
-    var validation = bulletList(validationPoints);
+    if(knownProblems && taskKeys.indexOf("bugfix") === -1){
+      // bugfix tasks already demand reproduction + symptom confirmation in their task focus.
+      validationPoints.push("Confirm the reported issues in Known Problems no longer occur.");
+    }
+    var validation = bulletList(validationPoints.filter(function(item, i){ return validationPoints.indexOf(item) === i; }));
 
     // DEFINITION OF DONE
     var dodPoints = [];
@@ -1783,21 +2348,53 @@
 
     // FINAL RESPONSE FORMAT
     var finalFormat = tier === "simple"
-      ? "When done, summarize what changed, the files touched, how it was verified, and any assumptions made. Before that, double-check you didn't expand scope beyond the objective or state any invented project detail as fact."
-      : "When the task is complete, respond with:\n" +
-        bulletList([
-          "A brief summary of what was changed and why.",
-          "The list of files that were modified, added, or removed.",
-          "How the change was tested or verified.",
-          "Any assumptions you made or decisions you took that the user should be aware of.",
-          "Any known limitations, risks, or follow-up work."
-        ]);
+      ? (legacy
+        ? "When done, summarize what changed, the files touched, how it was verified, and any assumptions made. Before that, double-check you didn't expand scope beyond the objective or state any invented project detail as fact."
+        : "When done, lead with whether the objective was achieved, then summarize what changed, the files touched, how it was verified, and any assumptions made. Before that, double-check you didn't expand scope beyond the objective or state any invented project detail as fact.")
+      : (legacy
+        ? "When the task is complete, respond with:\n" +
+          bulletList([
+            "A brief summary of what was changed and why.",
+            "The list of files that were modified, added, or removed.",
+            "How the change was tested or verified.",
+            "Any assumptions you made or decisions you took that the user should be aware of.",
+            "Any known limitations, risks, or follow-up work."
+          ])
+        : "When the task is complete, respond with:\n" +
+          bulletList([
+            "Whether the objective was achieved — state upfront what works now that did not work before.",
+            "A brief summary of what was changed and why.",
+            "The list of files that were modified, added, or removed.",
+            "How the change was tested or verified — include the actual commands/checks you ran and their real output or results.",
+            "Any assumptions you made or decisions you took that the user should be aware of.",
+            "Any known limitations, risks, or follow-up work."
+          ]));
+
+    // WORKING RULES — behavioral guardrails that apply regardless of task
+    var workingRules = legacy ? [] : [
+      "Never invent file paths, APIs, config values, or error messages — verify against the actual repository before stating them.",
+      "If a listed file, command, or symptom does not match what you observe, report the mismatch explicitly instead of silently proceeding.",
+      "If you discover mid-task that the real problem differs from what is described here, say so explicitly before deviating from the stated objective — never silently substitute a different goal.",
+      "Report failures honestly: if a test, build, or check fails and you cannot fix it, state that plainly — never claim success for a step you did not actually run.",
+      "Keep secrets, tokens, and credentials out of logs, code, and your final summary.",
+      "Flag any step you could not complete, or any claim you could not verify, instead of glossing over it."
+    ];
+    if(diffsOnly && !legacy){
+      workingRules.unshift("Work in small, reviewable steps; pause and reassess after each edit rather than batching many changes.");
+    }
+
+    // KEY FILES — concrete entry points the agent should read first
+    var keyFilesLines = trimmedLines(document.getElementById("keyFiles").value);
+    var attachedSection = legacy ? null : buildAttachedFilesSection();
 
     // ---- Assemble sections, skipping ones that would just be empty filler ----
     var sections = [];
     sections.push(["ROLE", role]);
     if(agent.notes){
       sections.push(["AGENT NOTES", bulletList(agent.notes)]);
+    }
+    if(!legacy){
+      sections.push(["WORKING RULES", bulletList(workingRules)]);
     }
     if(tier === "simple"){
       sections.push(["PROJECT & CONTEXT", project + "\n\n" + currentStateText]);
@@ -1808,13 +2405,28 @@
       sections.push(["OBJECTIVE", objectiveText]);
       sections.push(["EXPECTED RESULT", expectedText]);
     }
+    if(keyFilesLines.length){
+      sections.push(["CONTEXT FILES", bulletList(keyFilesLines) + "\n\nStart from these files before scanning the rest of the repository."]);
+    }
+    if(attachedSection){
+      sections.push(["ATTACHED FILES", attachedSection]);
+    }
     if(!(tier === "simple" && !requirementsLines.length)){
       sections.push(["REQUIREMENTS", requirementsText]);
     }
-    if(knownProblemsText || tier !== "simple"){
-      sections.push(["KNOWN PROBLEMS", knownProblemsText || "No known errors were provided. Inspect the project and identify relevant failure points related to the objective."]);
+    if(legacy){
+      // Pre-audit order: KNOWN PROBLEMS sat after REQUIREMENTS.
+      if(knownProblemsText || tier !== "simple"){
+        sections.push(["KNOWN PROBLEMS", knownProblemsText || "No known errors were provided. Inspect the project and identify relevant failure points related to the objective."]);
+      }
+      sections.push(["CONSTRAINTS", constraintsText]);
+    } else {
+      // Constraints first: the safety boundary the agent must respect before touching diagnostics.
+      sections.push(["CONSTRAINTS", constraintsText]);
+      if(knownProblemsText || tier !== "simple"){
+        sections.push(["KNOWN PROBLEMS", knownProblemsText || "No known errors were provided. Inspect the project and identify relevant failure points related to the objective."]);
+      }
     }
-    sections.push(["CONSTRAINTS", constraintsText]);
     if(glossaryLines.length){
       sections.push(["TERMINOLOGY", bulletList(glossaryLines)]);
     }
@@ -1825,11 +2437,15 @@
     sections.push(["VALIDATION", validation]);
     sections.push(["DEFINITION OF DONE", dod]);
     if(tier !== "simple"){
-      sections.push(["SELF-CHECK", bulletList([
+      var selfCheck = [
         "Confirm you preserved the user's stated objective without expanding scope beyond it.",
         "Confirm you did not present any assumed or invented project detail as fact.",
         "Confirm this is the smallest change that correctly solves the problem."
-      ])]);
+      ];
+      if(!legacy){
+        selfCheck.push("Confirm every Validation step above was actually executed, and say so plainly if any step could not be performed.");
+      }
+      sections.push(["SELF-CHECK", bulletList(selfCheck)]);
     }
     sections.push(["FINAL RESPONSE FORMAT", finalFormat]);
 
@@ -1851,9 +2467,13 @@
     return slug || "section";
   }
 
+  // Token estimate: Arabic characters cost roughly 2-3x more tokens per char than
+  // Latin text in common tokenizers, so blend two rates for a truer count.
   function estimateTokens(text){
     if(!text) return 0;
-    return Math.max(1, Math.round(text.length / 4));
+    var arabic = (text.match(/[\u0600-\u06FF]/g) || []).length;
+    var other = text.length - arabic;
+    return Math.max(1, Math.round(arabic * 0.6 + other * 0.25));
   }
 
   function updateCounts(){
@@ -1874,12 +2494,120 @@
     return s.split(/\s+/).length;
   }
 
+  // ---- Prompt-quality analyzer ----
+  // Scores the generated prompt on grounding, specificity, and verifiability —
+  // the three traits that most affect coding-agent results — and emits actionable tips.
+  function analyzePromptQuality(){
+    var tips = [];
+    // Word signals come from user-written fields only — the generated prompt always
+    // contains validation boilerplate, which would otherwise inflate the scores.
+    var userText = [val("objective"), val("expectedResult"), val("requirements"), val("constraints"), val("currentState")].join(" ");
+    var has = function(re){ return re.test(userText); };
+    var objectiveLen = val("objective").length;
+    var reqCount = trimmedLines(document.getElementById("requirements").value).length;
+    var constraintCount = trimmedLines(document.getElementById("constraints").value).length;
+    var keyFileCount = trimmedLines(document.getElementById("keyFiles").value).length;
+    var expectedLen = val("expectedResult").length;
+
+    // GROUNDING — does the agent get anchored in real code/files/errors?
+    var g = 0;
+    if(keyFileCount > 0) g += 0.3;
+    if(val("knownProblems")) g += 0.25;
+    if(attachedFiles.length > 0) g += 0.25;
+    if(val("currentState")) g += 0.2;
+    if(val("techStack")) g += 0.1; // capped at 1
+    g = Math.min(1, g);
+    if(keyFileCount === 0 && attachedFiles.length === 0){
+      tips.push({ key: "tipAddFiles", strong: true });
+    }
+    if(!val("knownProblems")){
+      tips.push({ key: "tipAddKnownProblems" });
+    }
+
+    // SPECIFICITY — is the task unambiguous and bounded?
+    var s = 0;
+    if(objectiveLen >= 40) s += 0.35;
+    else if(objectiveLen >= 15) s += 0.15;
+    if(reqCount > 0) s += 0.25;
+    if(constraintCount > 0) s += 0.2;
+    if(expectedLen >= 30) s += 0.2;
+    s = Math.min(1, s);
+    if(objectiveLen > 0 && objectiveLen < 40){
+      tips.push({ key: "tipObjectiveDetail", strong: true });
+    }
+    if(objectiveLen === 0){
+      tips = tips.filter(function(tp){ return tp.key !== "tipObjectiveDetail"; });
+      tips.push({ key: "tipNoObjective", strong: true });
+    }
+    if(reqCount === 0){
+      tips.push({ key: "tipAddRequirements" });
+    }
+    if(expectedLen < 30){
+      tips.push({ key: "tipAddExpected" });
+    }
+
+    // VERIFIABILITY — can success be checked mechanically?
+    var v = 0;
+    if(expectedLen >= 30) v += 0.35;
+    if(has(/measure|benchmark|before and after|no longer occurs|regression|independently computed|compare/ig)) v += 0.25;
+    if(reqCount > 0) v += 0.2;
+    if(constraintCount > 0) v += 0.2;
+    v = Math.min(1, v);
+    if(expectedLen > 0 && expectedLen < 30){
+      tips.push({ key: "tipMakeMeasurable", strong: true });
+    }
+    if(!has(/test|verif|check/ig)){
+      tips.push({ key: "tipAddValidation" });
+    }
+
+    return {
+      scores: { grounding: g, specificity: s, verifiability: v },
+      overall: (g + s + v) / 3,
+      tips: tips.slice(0, 6)
+    };
+  }
+
+  function renderQualityPanel(){
+    var panel = document.getElementById("qualityPanel");
+    if(!panel) return;
+    if(!val("objective") && !val("currentState") && !val("knownProblems")){
+      panel.innerHTML = '<div class="quality-empty">' + escapeHtml(t("qualityEmpty")) + '</div>';
+      return;
+    }
+    var a = analyzePromptQuality();
+    var pct = function(x){ return Math.round(x * 100) + "%"; };
+    var cls = function(x){ return x >= 0.75 ? "good" : (x >= 0.45 ? "mid" : "low"); };
+    var rows = [
+      { k: "grounding", v: a.scores.grounding },
+      { k: "specificity", v: a.scores.specificity },
+      { k: "verifiability", v: a.scores.verifiability }
+    ];
+    var html = '<div class="quality-scores">';
+    rows.forEach(function(r){
+      html += '<div class="quality-score ' + cls(r.v) + '"><div class="qs-head"><span>' + escapeHtml(t("quality_" + r.k)) + '</span><span class="qs-val">' + pct(r.v) + '</span></div></div>';
+    });
+    html += '</div>';
+    if(a.tips.length){
+      html += '<ul class="quality-tips">';
+      a.tips.forEach(function(tp){
+        var txt = t("qualityTip_" + tp.key.replace(/^tip/, ""));
+        html += tp.strong ? ('<li><strong>' + escapeHtml(txt) + '</strong></li>') : ('<li>' + escapeHtml(txt) + '</li>');
+      });
+      html += '</ul>';
+    } else {
+      html += '<div class="quality-empty">' + escapeHtml(t("qualityNoTips")) + '</div>'; 
+    }
+    panel.innerHTML = html;
+  }
+
   var QUICK_PACKS = {
     proxy: "Handle proxy validation and rotation: verify proxies before use, rotate away from failing proxies, and never retry the same dead proxy repeatedly.",
     antibot: "Respect rate limits and anti-bot protections: use sensible delays/backoff, avoid request patterns that look automated, and handle CAPTCHA/block pages gracefully instead of crashing.",
     retry: "Implement retry with exponential backoff for transient failures, with a sane maximum retry count — no infinite retry loops.",
     leaks: "Verify no resource leaks: browser instances, open sockets, file handles, and background tasks must be cleaned up on both success and failure paths.",
-    session: "Handle session/cookie persistence correctly across restarts, and never log credentials, tokens, or session cookies in plaintext."
+    session: "Handle session/cookie persistence correctly across restarts, and never log credentials, tokens, or session cookies in plaintext.",
+    datachecks: "Validate outputs against independently computed checks (row counts, totals, schemas) — never validate results using the same code that produced them.",
+    datamessy: "Handle messy input explicitly: encodings (UTF-8 BOM, Arabic text), empty or null cells, duplicate rows, and malformed records — never assume clean data."
   };
 
   function toggleQuickPack(key){
@@ -1910,9 +2638,9 @@
   function updateQuickpackVisibility(){
     var section = document.getElementById("quickpackSection");
     if(!section) return;
-    var isAutomation = activePresets.indexOf("automation") !== -1 ||
-      (lastDetection.keys && lastDetection.keys.indexOf("automation") !== -1);
-    section.style.display = isAutomation ? "" : "none";
+    var keys = activePresets.length ? activePresets : (lastDetection.keys || []);
+    var packsRelevant = keys.indexOf("automation") !== -1 || keys.indexOf("data") !== -1;
+    section.style.display = packsRelevant ? "" : "none";
   }
 
   function updateFieldCounters(){
@@ -1994,21 +2722,40 @@
   }
 
   function applyView(view){
-    currentView = (view === "rendered") ? "rendered" : "raw";
+    currentView = (view === "rendered" || view === "compare") ? view : "raw";
     document.querySelectorAll("[data-view]").forEach(function(b){
       b.classList.toggle("active", b.dataset.view === currentView);
     });
     var textarea = document.getElementById("output");
     var rendered = document.getElementById("renderedPreview");
+    var compareWrap = document.getElementById("compareWrap");
     if(currentView === "rendered"){
       textarea.style.display = "none";
       rendered.style.display = "block";
+      compareWrap.style.display = "none";
       rendered.innerHTML = renderMarkdown(textarea.value);
       if(currentLang === "ar"){ rendered.dir = "auto"; }
+    } else if(currentView === "compare"){
+      textarea.style.display = "none";
+      rendered.style.display = "none";
+      compareWrap.style.display = "";
+      updateComparePanes();
     } else {
       textarea.style.display = "";
       rendered.style.display = "none";
+      compareWrap.style.display = "none";
     }
+  }
+
+  function updateComparePanes(){
+    var beforeTa = document.getElementById("compareBefore");
+    var afterTa = document.getElementById("compareAfter");
+    if(!beforeTa || !afterTa) return;
+    beforeTa.value = buildPrompt({ legacy: true });
+    afterTa.value = buildPrompt();
+    document.getElementById("compareMetaBefore").textContent = t("counterChars", { chars: beforeTa.value.length });
+    document.getElementById("compareMetaAfter").textContent = t("counterChars", { chars: afterTa.value.length });
+    beforeTa.dir = afterTa.dir = (headingLang === "ar") ? "rtl" : "ltr";
   }
 
   var toastTimer = null;
@@ -2069,7 +2816,9 @@
     updateTaskTypeHint();
     updateComplexityBadge();
     updateQuickpackVisibility();
+    if(document.getElementById("qualityPanel").classList.contains("show")){ renderQualityPanel(); }
     if(currentView === "rendered"){ applyView("rendered"); }
+    if(currentView === "compare"){ updateComparePanes(); }
   }
 
   function isLivePreviewOn(){
@@ -2162,7 +2911,8 @@
       headingLangManual: headingLangManual,
       view: currentView,
       agent: document.getElementById("targetAgent").value,
-      complexityOverride: document.getElementById("complexityOverride").value
+      complexityOverride: document.getElementById("complexityOverride").value,
+      responseLang: document.getElementById("responseLang").value
     }));
   }
 
@@ -2181,12 +2931,15 @@
         headingLang = prefs.headingLang;
         headingLangManual = !!prefs.headingLangManual;
       }
-      if(prefs.view === "rendered" || prefs.view === "raw"){ currentView = prefs.view; }
+      if(prefs.view === "rendered" || prefs.view === "compare" || prefs.view === "raw"){ currentView = prefs.view; }
       if(prefs.agent && TARGET_AGENTS[prefs.agent]){
         document.getElementById("targetAgent").value = prefs.agent;
       }
       if(["auto","simple","standard","complex"].indexOf(prefs.complexityOverride) !== -1){
         document.getElementById("complexityOverride").value = prefs.complexityOverride;
+      }
+      if(["auto","en","ar"].indexOf(prefs.responseLang) !== -1){
+        document.getElementById("responseLang").value = prefs.responseLang;
       }
     } catch(e){}
   }
@@ -2226,14 +2979,22 @@
       btn.classList.toggle("active", btn.dataset.lang === currentLang);
     });
 
+    // Localize the hardcoded generic-agent option (other options are product names).
+    var genericOpt = document.querySelector('#targetAgent option[value="generic"]');
+    if(genericOpt){ genericOpt.textContent = t("agentGeneric"); }
+
     refreshTemplateSelect();
     refreshHistory();
+    refreshWelcomeBanner();
     updateTaskTypeHint();
     updateCounts();
     updateFieldCounters();
     updateObjectiveWarning();
     updateComplexityBadge();
+    renderAttachChips();
+    if(document.getElementById("qualityPanel").classList.contains("show")){ renderQualityPanel(); }
     if(currentView === "rendered"){ applyView("rendered"); }
+    if(currentView === "compare"){ updateComparePanes(); }
   }
 
   // ---------- Templates ----------
@@ -2354,7 +3115,34 @@
     hint.onclick = function(){ reuseFromHistory(match); };
   }
 
+  function refreshHistoryTypeFilter(){
+    var sel = document.getElementById("historyTypeFilter");
+    if(!sel) return;
+    var current = sel.value;
+    var present = {};
+    getHistory().forEach(function(entry){
+      (entry.taskKeys || []).forEach(function(k){ present[k] = true; });
+    });
+    sel.innerHTML = "";
+    var allOpt = document.createElement("option");
+    allOpt.value = "";
+    allOpt.textContent = t("historyFilterAll");
+    sel.appendChild(allOpt);
+    Object.keys(TASK_TYPES).forEach(function(key){
+      if(!present[key]) return;
+      var opt = document.createElement("option");
+      opt.value = key;
+      var tt = TASK_TYPES[key];
+      opt.textContent = (currentLang === "ar" && tt.labelAr) ? tt.labelAr : tt.label;
+      sel.appendChild(opt);
+    });
+    if(current && (present[current] || current === sel.value)){
+      sel.value = current;
+    }
+  }
+
   function refreshHistory(){
+    refreshHistoryTypeFilter();
     var list = document.getElementById("historyList");
     var history = getHistory();
     list.innerHTML = "";
@@ -2365,7 +3153,13 @@
       list.appendChild(empty);
       return;
     }
+    var q = (document.getElementById("historySearch").value || "").toLowerCase().trim();
+    var typeFilter = document.getElementById("historyTypeFilter").value;
+    var shown = 0;
     history.forEach(function(entry, idx){
+      if(q && (entry.title || "").toLowerCase().indexOf(q) === -1 && (entry.text || "").toLowerCase().indexOf(q) === -1) return;
+      if(typeFilter && (!entry.taskKeys || entry.taskKeys.indexOf(typeFilter) === -1)) return;
+      shown += 1;
       var item = document.createElement("div");
       item.className = "history-item";
       var title = document.createElement("span");
@@ -2400,6 +3194,12 @@
       });
       list.appendChild(item);
     });
+    if(!shown){
+      var noMatch = document.createElement("div");
+      noMatch.className = "history-empty";
+      noMatch.textContent = t("historyNoMatch");
+      list.appendChild(noMatch);
+    }
   }
 
   // ---------- Events ----------
@@ -2412,6 +3212,82 @@
     if(window.innerWidth < 1000){
       document.getElementById("outputPanel").scrollIntoView({ behavior: "smooth", block: "start" });
     }
+  });
+
+  document.getElementById("generateFab").addEventListener("click", function(){
+    document.getElementById("generateBtn").click();
+  });
+
+  document.getElementById("attachBtn").addEventListener("click", function(){
+    document.getElementById("attachInput").click();
+  });
+
+  document.getElementById("attachInput").addEventListener("change", function(){
+    // Snapshot the FileList into a real array BEFORE clearing the input —
+    // this.files is live and input.value="" empties it in place.
+    var files = Array.prototype.slice.call(this.files);
+    this.value = "";
+    if(files.length){ addAttachedFiles(files); }
+  });
+
+  // ---- Drag & drop anywhere on the page ----
+  var dropOverlay = document.getElementById("dropOverlay");
+  var dragDepth = 0;
+  document.addEventListener("dragenter", function(e){
+    if(!e.dataTransfer || !Array.prototype.includes.call(e.dataTransfer.types, "Files")) return;
+    e.preventDefault();
+    dragDepth += 1;
+    dropOverlay.classList.add("show");
+  });
+  document.addEventListener("dragover", function(e){
+    if(dragDepth){ e.preventDefault(); }
+  });
+  document.addEventListener("dragleave", function(e){
+    if(!dragDepth) return;
+    dragDepth -= 1;
+    if(!dragDepth){ dropOverlay.classList.remove("show"); }
+  });
+  document.addEventListener("drop", function(e){
+    dragDepth = 0;
+    dropOverlay.classList.remove("show");
+    if(!e.dataTransfer || !e.dataTransfer.files || !e.dataTransfer.files.length) return;
+    e.preventDefault();
+    addAttachedFiles(Array.prototype.slice.call(e.dataTransfer.files));
+  });
+
+  // ---- Paste files (or plain-text snippets) as reference material ----
+  document.addEventListener("paste", function(e){
+    var items = e.clipboardData && e.clipboardData.items;
+    if(!items) return;
+    var files = [];
+    for(var i = 0; i < items.length; i++){
+      if(items[i].kind === "file" && items[i].getAsFile){
+        var f = items[i].getAsFile();
+        if(f) files.push(f);
+      }
+    }
+    if(files.length){
+      e.preventDefault();
+      addAttachedFiles(files);
+      return;
+    }
+    // Pasting a text snippet (from an editor/browser) while not typing in a field
+    // captures it as a named snippet — a common “look at this error” workflow.
+    var active = document.activeElement;
+    var typing = active && (active.tagName === "TEXTAREA" || (active.tagName === "INPUT" && active.type === "text"));
+    var text = e.clipboardData && e.clipboardData.getData("text/plain");
+    if(!typing && text && text.trim().length > 10){
+      e.preventDefault();
+      addAttachedFiles([new File([text], "pasted-snippet-" + new Date().toISOString().slice(11, 19).replace(/:/g, "") + ".txt", { type: "text/plain" })]);
+      showToast(t("toastSnippetAttached"));
+    }
+  });
+
+  document.getElementById("qualityBtn").addEventListener("click", function(){
+    var panel = document.getElementById("qualityPanel");
+    var willShow = !panel.classList.contains("show");
+    panel.classList.toggle("show", willShow);
+    if(willShow){ renderQualityPanel(); }
   });
 
   document.getElementById("copyBtn").addEventListener("click", function(){
@@ -2444,15 +3320,36 @@
     }
   }
 
+  // Convert a generated prompt into a standing project-instructions file.
+  // The prompt is written as one-off task briefs; CLAUDE.md/AGENTS.md are persistent
+  // instructions, so the file is framed as rules that apply to "any task in this repo".
+  function toProjectInstructions(promptText, flavor){
+    var title = flavor === "agents" ? "AGENTS.md — standing instructions for coding agents" : "CLAUDE.md — instructions for Claude Code";
+    var header = "# " + title + "\n\n" +
+      "This file gives coding agents the standing context and ground rules for working in this repository. " +
+      "It was generated from a task brief, so treat the project-specific facts below as the durable truth and generalize task-specific wording.\n";
+    var footer = "\n\n---\n\n_Generated with the Expert Coding Prompt Generator. Review and prune before committing — keep only what is true for every future task._";
+    return header + "\n\n" + promptText + footer;
+  }
+
   document.getElementById("downloadBtn").addEventListener("click", function(){
     var text = document.getElementById("output").value;
     if(!text.trim()){
       showToast(t("toastNothingToDownload"));
       return;
     }
-    var ext = document.getElementById("downloadFormat").value === "txt" ? "txt" : "md";
-    var filename = slugify(val("projectName")) + "." + ext;
-    var mime = ext === "md" ? "text/markdown" : "text/plain";
+    var fmt = document.getElementById("downloadFormat").value;
+    var ext, filename, mime;
+    if(fmt === "claude-md" || fmt === "agents-md"){
+      ext = "md";
+      filename = fmt === "claude-md" ? "CLAUDE.md" : "AGENTS.md";
+      mime = "text/markdown";
+      text = toProjectInstructions(text, fmt === "agents-md" ? "agents" : "claude");
+    } else {
+      ext = fmt === "txt" ? "txt" : "md";
+      filename = slugify(val("projectName")) + "." + ext;
+      mime = ext === "md" ? "text/markdown" : "text/plain";
+    }
     try {
       var blob = new Blob([text], { type: mime + ";charset=utf-8" });
       var url = URL.createObjectURL(blob);
@@ -2463,7 +3360,7 @@
       a.click();
       document.body.removeChild(a);
       setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
-      showToast(t("toastDownloaded", { filename: filename }));
+      showToast(t(fmt === "claude-md" || fmt === "agents-md" ? "toastProjectFileDownloaded" : "toastDownloaded", { filename: filename }));
     } catch(e){
       showToast(t("toastDownloadFailed"));
     }
@@ -2562,6 +3459,11 @@
   document.getElementById("complexityOverride").addEventListener("change", function(){
     savePrefs();
     updateComplexityBadge();
+    if(isLivePreviewOn()){ regenerateOutput(); }
+  });
+
+  document.getElementById("responseLang").addEventListener("change", function(){
+    savePrefs();
     if(isLivePreviewOn()){ regenerateOutput(); }
   });
 
@@ -2721,6 +3623,65 @@
     showToast(t("toastHistoryCleared"));
   });
 
+  document.getElementById("historySearch").addEventListener("input", refreshHistory);
+  document.getElementById("historyTypeFilter").addEventListener("change", refreshHistory);
+
+  // ---- Shareable link: encode the whole form state into the URL hash ----
+  // base64url(JSON) in location.hash — nothing is sent to any server; the link
+  // carries the brief itself (this is how “nothing leaves the browser” stays true).
+  function b64urlEncode(str){
+    var bytes = new TextEncoder().encode(str);
+    var bin = "";
+    bytes.forEach(function(b){ bin += String.fromCharCode(b); });
+    return btoa(bin).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+  }
+  function b64urlDecode(str){
+    var b64 = str.replace(/-/g, "+").replace(/_/g, "/");
+    while(b64.length % 4){ b64 += "="; }
+    var bin = atob(b64);
+    var bytes = new Uint8Array(bin.length);
+    for(var i = 0; i < bin.length; i++){ bytes[i] = bin.charCodeAt(i); }
+    return new TextDecoder().decode(bytes);
+  }
+
+  document.getElementById("shareBtn").addEventListener("click", function(){
+    try {
+      var state = captureFormState();
+      var hash = "#s=" + b64urlEncode(JSON.stringify(state));
+      var url = location.origin + location.pathname + location.search + hash;
+      if(hash.length > 60000){
+        showToast(t("toastShareTooLong"));
+        return;
+      }
+      history.replaceState(null, "", hash);
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(url).then(function(){
+          showToast(t("toastShareCopied"));
+        }).catch(function(){
+          showToast(t("toastShareReady"));
+        });
+      } else {
+        showToast(t("toastShareReady"));
+      }
+    } catch(e){
+      showToast(t("toastShareFailed"));
+    }
+  });
+
+  function loadSharedState(){
+    var m = location.hash.match(/^#s=([A-Za-z0-9_-]+)$/);
+    if(!m) return false;
+    try {
+      applyFormState(JSON.parse(b64urlDecode(m[1])));
+      // Consume the hash once applied: otherwise the teammate's next reload would
+      // silently re-apply this brief over their own newer draft.
+      history.replaceState(null, "", location.pathname + location.search);
+      return true;
+    } catch(e){
+      return false;
+    }
+  }
+
   // Ctrl+Enter anywhere generates the prompt.
   document.addEventListener("keydown", function(e){
     if((e.ctrlKey || e.metaKey) && e.key === "Enter"){
@@ -2786,12 +3747,33 @@
     row.appendChild(counter);
   });
 
+  // Welcome banner: first-visit guidance, dismissible, remembered.
+  var WELCOME_KEY = "epg_welcome_dismissed_v1";
+  function refreshWelcomeBanner(){
+    var banner = document.getElementById("welcomeBanner");
+    if(!banner) return;
+    banner.style.display = safeGetItem(WELCOME_KEY) ? "none" : "";
+  }
+  document.getElementById("welcomeCloseBtn").addEventListener("click", function(){
+    safeSetItem(WELCOME_KEY, "1");
+    document.getElementById("welcomeBanner").style.display = "none";
+  });
+
+  // Self-test the task-type detector once at startup; expose for manual runs.
+  window.epgSelfTest = detectSelfTest;
+  var selfTest = detectSelfTest();
+  if(selfTest.failures.length){
+    console.warn("[epg] task-type detector self-test failures:", selfTest.failures);
+  }
+
   loadPrefs();
+  refreshWelcomeBanner();
   applyTheme(currentTheme);
   applyLanguage(currentLang);
   setFormat(currentFormat);
   applyView(currentView);
-  loadDraft();
+  // A shared link takes precedence over the locally saved draft.
+  if(!loadSharedState()){ loadDraft(); }
   updateFieldCounters();
   updateObjectiveWarning();
   updateComplexityBadge();

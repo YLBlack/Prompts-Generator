@@ -1,0 +1,2804 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Expert Coding Prompt Generator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0B1220;
+    --bg-grid: rgba(94,140,216,0.055);
+    --panel:#101A2E;
+    --panel-alt:#0D1628;
+    --border:#22314C;
+    --border-strong:#34486B;
+    --text:#E7EDF7;
+    --text-dim:#8FA0BD;
+    --text-faint:#5C6885;
+    --accent:#E3A857;
+    --accent-dim:#B98544;
+    --accent-soft-bg: rgba(227,168,87,0.12);
+    --accent-ink:#1B1206;
+    --danger:#E08585;
+    --font-sans: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif;
+    --font-mono: ui-monospace, "JetBrains Mono", "SFMono-Regular", "Cascadia Code", Consolas, "Liberation Mono", monospace;
+    --font-arabic: 'Cairo', var(--font-sans);
+    --radius: 10px;
+  }
+
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; }
+  body{
+    background-color: var(--bg);
+    background-image:
+      linear-gradient(var(--bg-grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--bg-grid) 1px, transparent 1px);
+    background-size: 32px 32px;
+    color: var(--text);
+    font-family: var(--font-sans);
+    font-size:15px;
+    line-height:1.55;
+    min-height:100vh;
+  }
+
+  html[dir="rtl"] body{
+    font-family: var(--font-arabic);
+    line-height:1.75;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ transition:none !important; animation:none !important; }
+  }
+
+  a{ color: var(--accent); }
+
+  /* ---------- Header ---------- */
+  .app-header{
+    max-width:1240px;
+    margin:0 auto;
+    padding:28px 24px 20px;
+    display:flex;
+    align-items:center;
+    gap:14px;
+    border-bottom:1px solid var(--border);
+  }
+  .mark{
+    width:34px; height:34px; flex:0 0 auto;
+    border:1.5px solid var(--accent-dim);
+    border-radius:8px;
+    display:flex; align-items:center; justify-content:center;
+    position:relative;
+  }
+  .mark svg{ width:18px; height:18px; }
+  .header-text{ flex:1 1 auto; min-width:0; }
+  .header-text h1{
+    margin:0;
+    font-size:18px;
+    font-weight:600;
+    letter-spacing:0.01em;
+  }
+  .header-text p{
+    margin:4px 0 0;
+    font-size:13px;
+    color: var(--text-dim);
+  }
+
+  /* ---------- Language switch ---------- */
+  .lang-switch{
+    display:flex;
+    gap:6px;
+    flex:0 0 auto;
+  }
+  .lang-btn{
+    font-family: var(--font-sans);
+    font-size:12px;
+    font-weight:600;
+    letter-spacing:0.02em;
+    color: var(--text-dim);
+    background: var(--panel-alt);
+    border:1px solid var(--border);
+    border-radius:999px;
+    padding:6px 13px;
+    cursor:pointer;
+    transition: border-color .15s ease, color .15s ease, background .15s ease;
+  }
+  .lang-btn:hover{ border-color: var(--border-strong); color: var(--text); }
+  .lang-btn.active{
+    background: var(--accent-soft-bg);
+    border-color: var(--accent-dim);
+    color: var(--accent);
+  }
+  .header-controls{ display:flex; align-items:center; gap:10px; margin-inline-start:auto; }
+
+  /* ---------- Theme toggle ---------- */
+  .theme-btn{
+    width:34px; height:34px; flex:0 0 auto;
+    display:flex; align-items:center; justify-content:center;
+    background: var(--panel-alt);
+    border:1px solid var(--border);
+    border-radius:8px;
+    font-size:15px;
+    cursor:pointer;
+    transition: border-color .15s ease;
+  }
+  .theme-btn:hover{ border-color: var(--border-strong); }
+
+  /* ---------- Help panel ---------- */
+  .help-panel{
+    max-width:1240px;
+    margin:0 auto 18px;
+    padding:14px 24px;
+    background: var(--panel);
+    border:1px solid var(--border);
+    border-radius:12px;
+  }
+  .help-item{
+    font-size:13px;
+    line-height:1.6;
+    color: var(--text-dim);
+    margin-bottom:6px;
+  }
+  .help-item:last-child{ margin-bottom:0; }
+  .help-item strong{ color: var(--text); }
+
+  /* ---------- Layout ---------- */
+  .layout{
+    max-width:1240px;
+    margin:0 auto;
+    padding:24px;
+    display:grid;
+    grid-template-columns: 1.05fr 1fr;
+    gap:24px;
+    align-items:start;
+  }
+  @media (max-width: 999px){
+    .layout{ grid-template-columns: 1fr; padding:16px; gap:16px; }
+    .app-header{ padding:20px 16px 16px; }
+  }
+
+  .form-col{ min-width:0; }
+
+  /* ---------- Sheets (cards) ---------- */
+  .sheet{
+    background: var(--panel);
+    border:1px solid var(--border);
+    border-radius: var(--radius);
+    padding:18px 18px 20px;
+  }
+  .sheet + .sheet{ margin-top:14px; }
+  .sheet-head{
+    display:flex;
+    align-items:baseline;
+    gap:8px;
+    padding-bottom:12px;
+    margin-bottom:14px;
+    border-bottom:1px solid var(--border);
+  }
+  .sheet-index{
+    font-family: var(--font-mono);
+    font-size:12px;
+    color: var(--accent-dim);
+  }
+  .sheet-title{
+    font-size:14.5px;
+    font-weight:600;
+    color: var(--text);
+  }
+  .sheet-desc{
+    font-size:12.5px;
+    color: var(--text-dim);
+    margin: -6px 0 14px;
+  }
+
+  .field{ margin-bottom:14px; }
+  .field:last-child{ margin-bottom:0; }
+  .field label{
+    display:block;
+    font-size:13px;
+    font-weight:500;
+    color: var(--text);
+    margin-bottom:6px;
+  }
+  .badge{
+    color: var(--accent);
+    font-size:12px;
+    font-weight:500;
+    margin-inline-start:6px;
+  }
+  .hint{
+    font-size:12px;
+    color: var(--text-faint);
+    margin-top:5px;
+  }
+  .hint-clickable{
+    cursor:pointer;
+    color: var(--accent);
+    margin-bottom:10px;
+    text-decoration:underline;
+    text-decoration-style:dotted;
+  }
+  .hint-clickable:hover{ color: var(--text); }
+
+  input[type="text"], input[type="password"], textarea{
+    width:100%;
+    background: var(--panel-alt);
+    border:1px solid var(--border);
+    border-radius:8px;
+    color: var(--text);
+    padding:10px 12px;
+    font-family: var(--font-sans);
+    font-size:14px;
+    line-height:1.5;
+    transition: border-color .15s ease, box-shadow .15s ease;
+  }
+  textarea{ resize:vertical; display:block; }
+  textarea.mono{ font-family: var(--font-mono); font-size:13px; }
+  input:focus, textarea:focus, button:focus-visible{
+    outline:none;
+    border-color: var(--accent-dim);
+    box-shadow: 0 0 0 3px var(--accent-soft-bg);
+  }
+  ::placeholder{ color: var(--text-faint); }
+
+  /* ---------- Priorities ---------- */
+  .priorities-grid{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap:10px 16px;
+  }
+  @media (max-width:520px){
+    .priorities-grid{ grid-template-columns: 1fr; }
+  }
+  .priority-item{
+    display:flex;
+    align-items:center;
+    gap:9px;
+    font-size:13.5px;
+    color: var(--text);
+  }
+  .priority-item input[type="checkbox"]{
+    width:17px; height:17px;
+    accent-color: var(--accent);
+    flex:0 0 auto;
+  }
+
+  /* ---------- Presets ---------- */
+  .presets-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+  }
+  .preset-btn{
+    font-family: var(--font-sans);
+    font-size:13px;
+    color: var(--text-dim);
+    background: var(--panel-alt);
+    border:1px solid var(--border);
+    border-radius:999px;
+    padding:7px 14px;
+    cursor:pointer;
+    transition: border-color .15s ease, color .15s ease, background .15s ease;
+  }
+  .preset-btn:hover{ border-color: var(--border-strong); color: var(--text); }
+  .preset-btn.active{
+    background: var(--accent-soft-bg);
+    border-color: var(--accent-dim);
+    color: var(--accent);
+  }
+  .quickpack-btn{
+    font-family: var(--font-sans);
+    font-size:12.5px;
+    color: var(--text-dim);
+    background: var(--panel-alt);
+    border:1px solid var(--border);
+    border-radius:999px;
+    padding:6px 12px;
+    cursor:pointer;
+    transition: border-color .15s ease, color .15s ease, background .15s ease;
+  }
+  .quickpack-btn:hover{ border-color: var(--border-strong); color: var(--text); }
+  .quickpack-btn.active{
+    background: var(--accent-soft-bg);
+    border-color: var(--accent-dim);
+    color: var(--accent);
+  }
+
+  /* ---------- Buttons ---------- */
+  .btn{
+    font-family: var(--font-sans);
+    font-size:13.5px;
+    font-weight:500;
+    padding:9px 16px;
+    border-radius:8px;
+    border:1px solid transparent;
+    cursor:pointer;
+    transition: border-color .15s ease, background .15s ease, color .15s ease;
+  }
+  .btn-primary{
+    background: var(--accent);
+    color: var(--accent-ink);
+  }
+  .btn-primary:hover{ background:#EEB86C; }
+  .btn-secondary{
+    background:transparent;
+    border-color: var(--border-strong);
+    color: var(--text);
+  }
+  .btn-secondary:hover{ border-color: var(--accent-dim); color: var(--accent); }
+  .btn-ghost{
+    background:transparent;
+    border-color:transparent;
+    color: var(--text-dim);
+  }
+  .btn-ghost:hover{ color: var(--danger); }
+  .btn[disabled]{ opacity:.55; cursor:not-allowed; }
+
+  /* ---------- Output panel ---------- */
+  .output-panel{
+    background: var(--panel);
+    border:1px solid var(--border);
+    border-radius: var(--radius);
+    padding:18px;
+    transition: border-color .3s ease, box-shadow .3s ease;
+  }
+  @media (min-width:1000px){
+    .output-panel{ position:sticky; top:24px; }
+  }
+  .output-panel.just-generated{
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-soft-bg);
+  }
+  .output-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    flex-wrap:wrap;
+    padding-bottom:12px;
+    margin-bottom:12px;
+    border-bottom:1px solid var(--border);
+  }
+  .output-title-row{ display:flex; align-items:center; gap:10px; min-width:0; }
+  .output-title{ font-size:14.5px; font-weight:600; }
+  .output-actions{ display:flex; gap:8px; flex-wrap:wrap; }
+  #output{
+    width:100%;
+    min-height:480px;
+    background: var(--panel-alt);
+    border:1px solid var(--border);
+    border-radius:8px;
+    color: var(--text);
+    padding:14px;
+    font-family: var(--font-mono);
+    font-size:12.5px;
+    line-height:1.6;
+    resize:vertical;
+  }
+  .output-meta{
+    margin-top:8px;
+    font-size:12px;
+    color: var(--text-faint);
+    font-family: var(--font-mono);
+  }
+  .output-meta.warning{ color: var(--danger); }
+
+  /* ---------- Complexity badge ---------- */
+  .complexity-badge{
+    font-family: var(--font-mono);
+    font-size:11.5px;
+    font-weight:600;
+    padding:3px 10px;
+    border-radius:999px;
+    border:1px solid var(--border);
+    color: var(--text-dim);
+    background: var(--panel-alt);
+    white-space:nowrap;
+  }
+  .complexity-badge.simple{ color:#5FAF70; border-color:rgba(95,175,112,.45); background:rgba(95,175,112,.09); }
+  .complexity-badge.standard{ color: var(--accent); border-color: var(--accent-dim); background: var(--accent-soft-bg); }
+  .complexity-badge.complex{ color: var(--danger); border-color:rgba(224,133,133,.45); background:rgba(224,133,133,.08); }
+
+  /* ---------- Field label rows + counters ---------- */
+  .label-row{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    gap:8px;
+  }
+  .label-row label{ margin-bottom:6px; }
+  .counter{
+    font-family: var(--font-mono);
+    font-size:11px;
+    color: var(--text-faint);
+    white-space:nowrap;
+  }
+
+  /* ---------- Objective warning ---------- */
+  .objective-warn{
+    display:none;
+    margin-top:7px;
+    font-size:12.5px;
+    color: var(--accent);
+    background: var(--accent-soft-bg);
+    border:1px solid var(--accent-dim);
+    border-radius:8px;
+    padding:7px 11px;
+  }
+  .objective-warn.show{ display:block; }
+
+  /* ---------- Rendered markdown preview ---------- */
+  #renderedPreview{
+    display:none;
+    width:100%;
+    min-height:480px;
+    max-height:70vh;
+    overflow:auto;
+    background: var(--panel-alt);
+    border:1px solid var(--border);
+    border-radius:8px;
+    color: var(--text);
+    padding:16px;
+    font-size:14px;
+    line-height:1.65;
+  }
+  #renderedPreview h2{ font-size:15px; margin:18px 0 8px; color: var(--accent); }
+  #renderedPreview h2:first-child{ margin-top:0; }
+  #renderedPreview hr{ border:none; border-top:1px solid var(--border); margin:14px 0; }
+  #renderedPreview ul{ margin:8px 0; padding-inline-start:22px; }
+  #renderedPreview li{ margin:3px 0; }
+  #renderedPreview p{ margin:8px 0; }
+  #renderedPreview pre{
+    background: var(--panel);
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:10px;
+    overflow:auto;
+    font-family: var(--font-mono);
+    font-size:12.5px;
+  }
+  #renderedPreview code{ font-family: var(--font-mono); font-size:0.92em; background: var(--panel); border-radius:4px; padding:1px 5px; }
+  #renderedPreview pre code{ background:transparent; padding:0; }
+
+  /* ---------- History ---------- */
+  .history-panel{
+    background: var(--panel);
+    border:1px solid var(--border);
+    border-radius: var(--radius);
+    padding:14px 18px;
+    margin-top:14px;
+  }
+  .history-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+    margin-bottom:8px;
+  }
+  .history-head span{ font-size:13px; font-weight:600; }
+  .history-list{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+    max-height:260px;
+    overflow:auto;
+  }
+  .history-item{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    background: var(--panel-alt);
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:7px 10px;
+    font-size:12.5px;
+    cursor:pointer;
+    transition: border-color .15s ease;
+  }
+  .history-item:hover{ border-color: var(--accent-dim); }
+  .history-item .hi-title{ flex:1 1 auto; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .history-item .hi-meta{ color: var(--text-faint); font-family: var(--font-mono); font-size:11px; white-space:nowrap; }
+  .history-item .hi-del{
+    background:none;
+    border:none;
+    color: var(--text-faint);
+    cursor:pointer;
+    font-size:13px;
+    padding:2px 4px;
+    flex:0 0 auto;
+  }
+  .history-item .hi-del:hover{ color: var(--danger); }
+  .history-empty{ font-size:12.5px; color: var(--text-faint); }
+
+
+  footer{
+    max-width:1240px;
+    margin:8px auto 40px;
+    padding:0 24px;
+    font-size:12.5px;
+    color: var(--text-faint);
+  }
+  @media (max-width:999px){
+    footer{ padding:0 16px; }
+  }
+
+  /* ---------- Toast ---------- */
+  .toast{
+    position:fixed;
+    left:50%;
+    bottom:28px;
+    transform: translate(-50%, 8px);
+    background: var(--panel);
+    border:1px solid var(--accent-dim);
+    color: var(--text);
+    padding:9px 16px;
+    border-radius:8px;
+    font-size:13px;
+    opacity:0;
+    pointer-events:none;
+    transition: opacity .18s ease, transform .18s ease;
+    z-index:50;
+  }
+  .toast.show{
+    opacity:1;
+    transform: translate(-50%, 0);
+    pointer-events:auto;
+  }
+  .toast-undo-btn{
+    margin-inline-start:10px;
+    background:none;
+    border:none;
+    color: var(--accent);
+    font-weight:600;
+    font-size:13px;
+    font-family: var(--font-sans);
+    cursor:pointer;
+    text-decoration:underline;
+    padding:0;
+  }
+  .toast-undo-btn:hover{ color: var(--text); }
+
+  /* ---------- Controls row / selects ---------- */
+  .controls-row{
+    display:flex;
+    flex-wrap:wrap;
+    align-items:center;
+    gap:8px;
+  }
+  .select-input{
+    background: var(--panel-alt);
+    border:1px solid var(--border);
+    border-radius:8px;
+    color: var(--text);
+    padding:9px 10px;
+    font-family: var(--font-sans);
+    font-size:13.5px;
+  }
+  .select-input:focus{
+    outline:none;
+    border-color: var(--accent-dim);
+    box-shadow: 0 0 0 3px var(--accent-soft-bg);
+  }
+  .select-input:disabled{ opacity:0.55; cursor:not-allowed; }
+  .select-compact{ padding:9px 8px; font-size:13px; }
+
+  /* ---------- Output options row ---------- */
+  .output-options{
+    display:flex;
+    flex-wrap:wrap;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    margin-bottom:12px;
+  }
+  .format-toggle{ display:flex; gap:6px; flex-wrap:wrap; }
+  .format-btn{
+    font-family: var(--font-sans);
+    font-size:12.5px;
+    color: var(--text-dim);
+    background: var(--panel-alt);
+    border:1px solid var(--border);
+    border-radius:999px;
+    padding:5px 12px;
+    cursor:pointer;
+    transition: border-color .15s ease, color .15s ease, background .15s ease;
+  }
+  .format-btn:hover{ border-color: var(--border-strong); color: var(--text); }
+  .format-btn.active{
+    background: var(--accent-soft-bg);
+    border-color: var(--accent-dim);
+    color: var(--accent);
+  }
+  .live-preview-toggle{
+    display:flex;
+    align-items:center;
+    gap:7px;
+    font-size:12.5px;
+    color: var(--text-dim);
+    cursor:pointer;
+    user-select:none;
+  }
+  .live-preview-toggle input[type="checkbox"]{
+    width:15px; height:15px;
+    accent-color: var(--accent);
+  }
+
+  /* ---------- Light theme ---------- */
+  html[data-theme="light"]{
+    --bg:#F4F6FB;
+    --bg-grid: rgba(70,100,160,0.06);
+    --panel:#FFFFFF;
+    --panel-alt:#EFF2F8;
+    --border:#D7DEEC;
+    --border-strong:#B9C4DA;
+    --text:#1C2740;
+    --text-dim:#5A6A88;
+    --text-faint:#8B96AE;
+    --accent:#A96F15;
+    --accent-dim:#B98324;
+    --accent-soft-bg: rgba(169,111,21,0.11);
+    --accent-ink:#FFF8EE;
+    --danger:#B04040;
+  }
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="mark" aria-hidden="true">
+    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M4 4H10M4 4V10" stroke="#E3A857" stroke-width="1.6" stroke-linecap="round"/>
+      <path d="M20 20H14M20 20V14" stroke="#E3A857" stroke-width="1.6" stroke-linecap="round"/>
+      <path d="M9 15L15 9" stroke="#E3A857" stroke-width="1.6" stroke-linecap="round"/>
+    </svg>
+  </div>
+  <div class="header-text">
+    <h1 data-i18n="appTitle">Expert Coding Prompt Generator</h1>
+    <p data-i18n="appSubtitle">Turn a project brief into a structured prompt for coding agents — Claude Code, Codex, Gemini CLI, and others.</p>
+  </div>
+  <div class="header-controls">
+    <div class="lang-switch" role="group" data-i18n-aria="langSwitchAria" aria-label="Language">
+      <button type="button" class="lang-btn active" data-lang="en">EN</button>
+      <button type="button" class="lang-btn" data-lang="ar">AR</button>
+    </div>
+    <button type="button" class="theme-btn" id="themeBtn" data-i18n-aria="themeToggleAria" aria-label="Toggle light/dark theme">☀</button>
+    <button type="button" class="theme-btn" id="helpBtn" data-i18n-aria="helpToggleAria" aria-label="Show help">؟</button>
+  </div>
+</header>
+
+<div class="help-panel" id="helpPanel" style="display:none;">
+  <div class="help-item"><strong data-i18n="helpTemplatesTitle">Templates</strong><span data-i18n="helpTemplatesBody"> — save the whole form under a name and reload it later. Your last draft is also restored automatically.</span></div>
+  <div class="help-item"><strong data-i18n="helpTaskTypeTitle">Task type</strong><span data-i18n="helpTaskTypeBody"> — pick one or more manually, or leave it blank and the generator will guess from what you wrote (shown as a hint with a confidence level).</span></div>
+  <div class="help-item"><strong data-i18n="helpQuickpackTitle">Quick-Packs</strong><span data-i18n="helpQuickpackBody"> — one-click requirement snippets that appear for Automation/Scraping tasks (proxy handling, retries, rate limits...).</span></div>
+  <div class="help-item"><strong data-i18n="helpComplexityTitle">Complexity</strong><span data-i18n="helpComplexityBody"> — controls how much detail the generated prompt includes. Auto sizes it to your inputs; you can force Simple/Standard/Complex instead.</span></div>
+  <div class="help-item"><strong data-i18n="helpAgentTitle">Target agent</strong><span data-i18n="helpAgentBody"> — adds a short note tailored to the coding agent you're using (Claude Code, Codex, Cursor...).</span></div>
+  <div class="help-item"><strong data-i18n="helpDiffsTitle">Diffs only</strong><span data-i18n="helpDiffsBody"> — asks the agent to prefer targeted patches over rewriting whole files.</span></div>
+  <div class="help-item"><strong data-i18n="helpFormatTitle">Output format</strong><span data-i18n="helpFormatBody"> — Markdown, plain text, or XML tags (XML is auto-suggested for Claude Code).</span></div>
+  <div class="help-item"><strong data-i18n="helpHistoryTitle">History</strong><span data-i18n="helpHistoryBody"> — every prompt you generate is saved locally; similar past tasks are suggested for reuse.</span></div>
+</div>
+
+<main class="layout">
+
+  <!-- ===================== FORM COLUMN ===================== -->
+  <div class="form-col">
+
+    <section class="sheet">
+      <div class="sheet-head">
+        <span class="sheet-index">01</span>
+        <span class="sheet-title" data-i18n="sheetTemplates">Templates</span>
+      </div>
+      <div class="sheet-desc" data-i18n="templatesDesc">Save the whole form under a name and reload it later. Your last draft is also restored automatically when you come back.</div>
+      <div class="field">
+        <label for="templateName" data-i18n="templateNameLabel">Template name</label>
+        <input type="text" id="templateName" data-i18n-placeholder="templateNamePlaceholder" placeholder="e.g. Deals Monitor project">
+      </div>
+      <div class="field">
+        <label for="templateNote" data-i18n="templateNoteLabel">Note (optional)</label>
+        <input type="text" id="templateNote" data-i18n-placeholder="templateNotePlaceholder" placeholder="e.g. Used this last for the SQLite export bug">
+      </div>
+      <div class="controls-row">
+        <button type="button" class="btn btn-secondary" id="saveTemplateBtn" data-i18n="saveTemplateBtn">Save as Template</button>
+        <select id="templateSelect" class="select-input" data-i18n-aria="templatesAria" aria-label="Saved templates"></select>
+        <button type="button" class="btn btn-secondary" id="loadTemplateBtn" data-i18n="loadTemplateBtn">Load</button>
+        <button type="button" class="btn btn-ghost" id="deleteTemplateBtn" data-i18n="deleteTemplateBtn">Delete</button>
+      </div>
+      <div class="hint" id="templateNotePreview"></div>
+      <div class="controls-row" style="margin-top:10px;">
+        <button type="button" class="btn btn-secondary" id="exportTemplatesBtn" data-i18n="exportTemplatesBtn">Export All (JSON)</button>
+        <button type="button" class="btn btn-secondary" id="importTemplatesBtn" data-i18n="importTemplatesBtn">Import (JSON)</button>
+        <input type="file" id="importTemplatesFile" accept=".json,application/json" style="display:none;">
+      </div>
+    </section>
+
+    <section class="sheet">
+      <div class="sheet-head">
+        <span class="sheet-index">02</span>
+        <span class="sheet-title" data-i18n="sheetProject">Project</span>
+      </div>
+      <div class="field">
+        <label for="projectName" data-i18n="projectNameLabel">Project name</label>
+        <input type="text" id="projectName" data-i18n-placeholder="projectNamePlaceholder" placeholder="e.g. Deals Monitor v11">
+      </div>
+      <div class="field">
+        <label for="techStack" data-i18n="techStackLabel">Tech stack</label>
+        <input type="text" id="techStack" data-i18n-placeholder="techStackPlaceholder" placeholder="e.g. Python, Flask, Playwright, Railway">
+      </div>
+      <div class="field">
+        <label for="styleConventions" data-i18n="styleLabel">Style / conventions</label>
+        <input type="text" id="styleConventions" data-i18n-placeholder="stylePlaceholder" placeholder="e.g. No diacritics, Cairo font only, simplified Fus'ha tone">
+      </div>
+    </section>
+
+    <section class="sheet">
+      <div class="sheet-head">
+        <span class="sheet-index">03</span>
+        <span class="sheet-title" data-i18n="sheetCurrentState">Current state &amp; context</span>
+      </div>
+      <div class="field">
+        <label for="currentState" data-i18n="currentStateLabel">Current project state</label>
+        <textarea id="currentState" rows="4" data-i18n-placeholder="currentStatePlaceholder" placeholder="Describe what the project is and where it stands today..."></textarea>
+      </div>
+      <div class="field">
+        <label for="extraContext" data-i18n="extraContextLabel">Extra context</label>
+        <textarea id="extraContext" rows="3" data-i18n-placeholder="extraContextPlaceholder" placeholder="Anything else the agent should know..."></textarea>
+      </div>
+    </section>
+
+    <section class="sheet">
+      <div class="sheet-head">
+        <span class="sheet-index">04</span>
+        <span class="sheet-title" data-i18n="sheetTask">Task</span>
+      </div>
+      <div class="field">
+        <label for="objective"><span data-i18n="objectiveLabel">Main objective</span> <span class="badge" data-i18n="mostImportantBadge">(most important field)</span></label>
+        <textarea id="objective" rows="4" data-i18n-placeholder="objectivePlaceholder" placeholder="What do you want the agent to achieve?"></textarea>
+        <div class="objective-warn" id="objectiveWarn" role="alert"></div>
+      </div>
+      <div class="field">
+        <label for="expectedResult" data-i18n="expectedResultLabel">Expected final result</label>
+        <textarea id="expectedResult" rows="3" data-i18n-placeholder="expectedResultPlaceholder" placeholder="What does the finished outcome look like?"></textarea>
+      </div>
+    </section>
+
+    <section class="sheet">
+      <div class="sheet-head">
+        <span class="sheet-index">05</span>
+        <span class="sheet-title" data-i18n="sheetRequirements">Requirements &amp; constraints</span>
+      </div>
+      <div class="field">
+        <label for="requirements" data-i18n="requirementsLabel">Requirements</label>
+        <textarea id="requirements" rows="4" data-i18n-placeholder="requirementsPlaceholder" placeholder="One requirement per line"></textarea>
+        <div class="hint" data-i18n="requirementsHint">One requirement per line.</div>
+        <div id="quickpackSection" style="display:none;">
+          <div class="controls-row quickpack-row">
+            <button type="button" class="quickpack-btn" data-pack="proxy" data-i18n="packProxy">Proxy handling</button>
+            <button type="button" class="quickpack-btn" data-pack="antibot" data-i18n="packAntibot">Anti-bot / rate limits</button>
+            <button type="button" class="quickpack-btn" data-pack="retry" data-i18n="packRetry">Retry / backoff</button>
+            <button type="button" class="quickpack-btn" data-pack="leaks" data-i18n="packLeaks">Resource leaks</button>
+            <button type="button" class="quickpack-btn" data-pack="session" data-i18n="packSession">Session / cookies</button>
+          </div>
+          <div class="hint" data-i18n="quickpackHint">Quick-Packs — click to add a ready-made requirement line (click again to remove it).</div>
+        </div>
+      </div>
+      <div class="field">
+        <label for="constraints" data-i18n="constraintsLabel">Constraints</label>
+        <textarea id="constraints" rows="4" data-i18n-placeholder="constraintsPlaceholder" placeholder="One constraint per line — things the agent must not change"></textarea>
+        <div class="hint" data-i18n="constraintsHint">One constraint per line.</div>
+        <label class="live-preview-toggle">
+          <input type="checkbox" id="diffsOnlyToggle">
+          <span data-i18n="diffsOnlyLabel">Diffs only (no full-file rewrites)</span>
+        </label>
+      </div>
+      <div class="field">
+        <label for="glossary" data-i18n="glossaryLabel">Glossary / key terms</label>
+        <textarea id="glossary" rows="3" data-i18n-placeholder="glossaryPlaceholder" placeholder="One term per line, e.g. Captain = النقيب"></textarea>
+        <div class="hint" data-i18n="glossaryHint">Optional — terms the agent should translate or keep consistent throughout.</div>
+      </div>
+    </section>
+
+    <section class="sheet">
+      <div class="sheet-head">
+        <span class="sheet-index">06</span>
+        <span class="sheet-title" data-i18n="sheetKnownProblems">Known problems / errors</span>
+      </div>
+      <div class="field">
+        <label for="knownProblems" data-i18n="knownProblemsLabel">Logs, stack traces, or known bugs</label>
+        <textarea id="knownProblems" class="mono" rows="5" data-i18n-placeholder="knownProblemsPlaceholder" placeholder="Paste error messages, logs, or stack traces here..."></textarea>
+      </div>
+    </section>
+
+    <section class="sheet">
+      <div class="sheet-head">
+        <span class="sheet-index">07</span>
+        <span class="sheet-title" data-i18n="sheetPriorities">Priorities</span>
+      </div>
+      <div class="priorities-grid">
+        <label class="priority-item"><input type="checkbox" class="priority-checkbox" data-key="arch"><span data-i18n="priorityArch">Understand architecture first</span></label>
+        <label class="priority-item"><input type="checkbox" class="priority-checkbox" data-key="minimal"><span data-i18n="priorityMinimal">Minimal changes</span></label>
+        <label class="priority-item"><input type="checkbox" class="priority-checkbox" data-key="robust"><span data-i18n="priorityRobust">Robust production solution</span></label>
+        <label class="priority-item"><input type="checkbox" class="priority-checkbox" data-key="testing"><span data-i18n="priorityTesting">Testing &amp; validation</span></label>
+        <label class="priority-item"><input type="checkbox" class="priority-checkbox" data-key="edge"><span data-i18n="priorityEdge">Edge cases</span></label>
+        <label class="priority-item"><input type="checkbox" class="priority-checkbox" data-key="regression"><span data-i18n="priorityRegression">Regression prevention</span></label>
+        <label class="priority-item"><input type="checkbox" class="priority-checkbox" data-key="security"><span data-i18n="prioritySecurity">Security</span></label>
+        <label class="priority-item"><input type="checkbox" class="priority-checkbox" data-key="performance"><span data-i18n="priorityPerformance">Performance</span></label>
+      </div>
+    </section>
+
+    <section class="sheet">
+      <div class="sheet-head">
+        <span class="sheet-index">08</span>
+        <span class="sheet-title" data-i18n="sheetTaskType">Task type</span>
+      </div>
+      <div class="sheet-desc" data-i18n="taskTypeDesc">Optional — pick one or more to sharpen the execution focus; the matching priorities are applied automatically. Leave blank to auto-detect from what you wrote above.</div>
+      <div class="presets-row">
+        <button type="button" class="preset-btn" data-preset="feature">Large Feature</button>
+        <button type="button" class="preset-btn" data-preset="bugfix">Bug Fix</button>
+        <button type="button" class="preset-btn" data-preset="refactor">Refactoring</button>
+        <button type="button" class="preset-btn" data-preset="performance">Performance Optimization</button>
+        <button type="button" class="preset-btn" data-preset="security">Security Audit</button>
+        <button type="button" class="preset-btn" data-preset="newproject">New Project</button>
+        <button type="button" class="preset-btn" data-preset="review">Full Codebase Review</button>
+        <button type="button" class="preset-btn" data-preset="ui">UI / UX</button>
+        <button type="button" class="preset-btn" data-preset="api">API / Backend</button>
+        <button type="button" class="preset-btn" data-preset="database">Database</button>
+        <button type="button" class="preset-btn" data-preset="automation">Automation / Scraping</button>
+        <button type="button" class="preset-btn" data-preset="testing">Testing</button>
+        <button type="button" class="preset-btn" data-preset="deployment">Deployment / DevOps</button>
+        <button type="button" class="preset-btn" data-preset="localization">Localization</button>
+        <button type="button" class="preset-btn" data-preset="translation">Translation / Proofreading</button>
+        <button type="button" class="preset-btn" data-preset="documentation">Documentation</button>
+        <button type="button" class="preset-btn" data-preset="migration">Migration / Integration</button>
+        <button type="button" class="preset-btn" data-preset="research">Research</button>
+      </div>
+      <div class="hint" id="taskTypeHint" style="display:none;"></div>
+    </section>
+
+    <section class="sheet">
+      <div class="sheet-head">
+        <span class="sheet-index">09</span>
+        <span class="sheet-title" data-i18n="sheetAgent">Target agent</span>
+      </div>
+      <div class="sheet-desc" data-i18n="agentDesc">Optional — shapes the instructions to the style and tools of the chosen coding agent.</div>
+      <div class="field">
+        <label for="targetAgent" data-i18n="agentLabel">Agent</label>
+        <select id="targetAgent" class="select-input">
+          <option value="generic">Any agent (generic)</option>
+          <option value="claude-code">Claude Code</option>
+          <option value="codex">Codex</option>
+          <option value="cursor">Cursor</option>
+          <option value="gemini-cli">Gemini CLI</option>
+        </select>
+      </div>
+    </section>
+
+
+  </div>
+
+  <!-- ===================== OUTPUT COLUMN ===================== -->
+  <div class="output-col">
+    <div class="output-panel" id="outputPanel">
+      <div class="output-head">
+        <div class="output-title-row">
+          <span class="output-title" data-i18n="outputTitle">Generated prompt</span>
+          <span class="complexity-badge" id="complexityBadge"></span>
+        </div>
+        <div class="output-actions">
+          <button type="button" class="btn btn-primary" id="generateBtn" data-i18n="generateBtn">Generate Prompt</button>
+          <button type="button" class="btn btn-secondary" id="copyBtn" data-i18n="copyBtn">Copy Prompt</button>
+          <select id="downloadFormat" class="select-input select-compact" data-i18n-aria="downloadFormatAria" aria-label="Download file format">
+            <option value="md">.md</option>
+            <option value="txt">.txt</option>
+          </select>
+          <button type="button" class="btn btn-secondary" id="downloadBtn" data-i18n="downloadBtn">Download</button>
+          <button type="button" class="btn btn-ghost" id="clearBtn" data-i18n="clearBtn">Clear</button>
+        </div>
+      </div>
+      <div class="output-options">
+        <div class="format-toggle" role="group" data-i18n-aria="outputFormatAria" aria-label="Output format">
+          <button type="button" class="format-btn active" data-format="markdown" data-i18n="formatMarkdown">Markdown</button>
+          <button type="button" class="format-btn" data-format="plain" data-i18n="formatPlain">Plain text</button>
+          <button type="button" class="format-btn" data-format="xml" data-i18n="formatXml">XML tags</button>
+        </div>
+        <div class="format-toggle" role="group" data-i18n-aria="outputViewAria" aria-label="Output view">
+          <button type="button" class="format-btn active" data-view="raw" data-i18n="viewRaw">Raw</button>
+          <button type="button" class="format-btn" data-view="rendered" data-i18n="viewRendered">Rendered</button>
+        </div>
+        <div class="format-toggle">
+          <select id="complexityOverride" class="select-input select-compact" data-i18n-aria="complexityOverrideLabel" aria-label="Complexity">
+            <option value="auto" data-i18n="complexityAuto">Auto</option>
+            <option value="simple" data-i18n="complexitySimple">Simple</option>
+            <option value="standard" data-i18n="complexityStandard">Standard</option>
+            <option value="complex" data-i18n="complexityComplex">Complex</option>
+          </select>
+        </div>
+        <div class="format-toggle">
+          <select id="headingsLang" class="select-input select-compact" data-i18n-aria="headingsLangAria" aria-label="Section headings language">
+            <option value="en" data-i18n="headingsEn">English headings</option>
+            <option value="ar" data-i18n="headingsAr">Arabic headings</option>
+          </select>
+        </div>
+        <label class="live-preview-toggle">
+          <input type="checkbox" id="livePreviewToggle">
+          <span data-i18n="livePreviewLabel">Live preview</span>
+        </label>
+      </div>
+      <div class="hint hint-clickable" id="historySuggestHint" style="display:none;"></div>
+      <textarea id="output" data-i18n-placeholder="outputPlaceholder" placeholder="Your generated prompt will appear here. Fill in the sections on the left, then choose Generate Prompt."></textarea>
+      <div id="renderedPreview"></div>
+      <div class="output-meta" id="outputMeta">0 characters · 0 lines</div>
+    </div>
+
+    <div class="history-panel" id="historyPanel">
+      <div class="history-head">
+        <span data-i18n="historyTitle">Recent prompts</span>
+        <button type="button" class="btn btn-ghost" id="historyClearBtn" data-i18n="historyClear">Clear all</button>
+      </div>
+      <div class="history-list" id="historyList"></div>
+    </div>
+  </div>
+
+</main>
+
+<footer data-i18n="footerText">Runs entirely in your browser — nothing here is sent anywhere. Drafts and templates are saved locally in your browser's storage.</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+  "use strict";
+
+  var I18N = {
+    en: {
+      appTitle: "Expert Coding Prompt Generator",
+      appSubtitle: "Turn a project brief into a structured prompt for coding agents — Claude Code, Codex, Gemini CLI, and others.",
+      sheetTemplates: "Templates",
+      templatesDesc: "Save the whole form under a name and reload it later. Your last draft is also restored automatically when you come back.",
+      templateNameLabel: "Template name",
+      templateNamePlaceholder: "e.g. Deals Monitor project",
+      templateNoteLabel: "Note (optional)",
+      templateNotePlaceholder: "e.g. Used this last for the SQLite export bug",
+      saveTemplateBtn: "Save as Template",
+      templatesAria: "Saved templates",
+      loadTemplateBtn: "Load",
+      deleteTemplateBtn: "Delete",
+      noSavedTemplates: "No saved templates",
+      exportTemplatesBtn: "Export All (JSON)",
+      importTemplatesBtn: "Import (JSON)",
+      sheetProject: "Project",
+      projectNameLabel: "Project name",
+      projectNamePlaceholder: "e.g. Deals Monitor v11",
+      techStackLabel: "Tech stack",
+      techStackPlaceholder: "e.g. Python, Flask, Playwright, Railway",
+      sheetCurrentState: "Current state & context",
+      currentStateLabel: "Current project state",
+      currentStatePlaceholder: "Describe what the project is and where it stands today...",
+      extraContextLabel: "Extra context",
+      extraContextPlaceholder: "Anything else the agent should know...",
+      sheetTask: "Task",
+      objectiveLabel: "Main objective",
+      mostImportantBadge: "(most important field)",
+      objectivePlaceholder: "What do you want the agent to achieve?",
+      expectedResultLabel: "Expected final result",
+      expectedResultPlaceholder: "What does the finished outcome look like?",
+      sheetRequirements: "Requirements & constraints",
+      requirementsLabel: "Requirements",
+      requirementsPlaceholder: "One requirement per line",
+      requirementsHint: "One requirement per line.",
+      constraintsLabel: "Constraints",
+      constraintsPlaceholder: "One constraint per line — things the agent must not change",
+      constraintsHint: "One constraint per line.",
+      sheetKnownProblems: "Known problems / errors",
+      knownProblemsLabel: "Logs, stack traces, or known bugs",
+      knownProblemsPlaceholder: "Paste error messages, logs, or stack traces here...",
+      sheetPriorities: "Priorities",
+      priorityArch: "Understand architecture first",
+      priorityMinimal: "Minimal changes",
+      priorityRobust: "Robust production solution",
+      priorityTesting: "Testing & validation",
+      priorityEdge: "Edge cases",
+      priorityRegression: "Regression prevention",
+      prioritySecurity: "Security",
+      priorityPerformance: "Performance",
+      sheetTaskType: "Task type",
+      taskTypeDesc: "Optional — pick one or more to sharpen the execution focus; the matching priorities are applied automatically. Leave blank to auto-detect from what you wrote above.",
+      sheetAgent: "Target agent",
+      agentDesc: "Optional — shapes the instructions to the style and tools of the chosen coding agent.",
+      agentLabel: "Agent",
+      agentGeneric: "Any agent (generic)",
+      outputTitle: "Generated prompt",
+      generateBtn: "Generate Prompt",
+      copyBtn: "Copy Prompt",
+      downloadFormatAria: "Download file format",
+      downloadBtn: "Download",
+      clearBtn: "Clear",
+      outputFormatAria: "Output format",
+      formatMarkdown: "Markdown",
+      formatPlain: "Plain text",
+      formatXml: "XML tags",
+      outputViewAria: "Output view",
+      viewRaw: "Raw",
+      viewRendered: "Rendered",
+      headingsLangAria: "Section headings language",
+      headingsEn: "English headings",
+      headingsAr: "Arabic headings",
+      livePreviewLabel: "Live preview",
+      outputPlaceholder: "Your generated prompt will appear here. Fill in the form, then choose Generate Prompt.",
+      footerText: "Runs entirely in your browser — nothing here is sent anywhere. Drafts and templates are saved locally in your browser's storage.",
+      langSwitchAria: "Language",
+      themeToggleAria: "Toggle light/dark theme",
+      helpToggleAria: "Show help",
+      helpTemplatesTitle: "Templates",
+      helpTemplatesBody: " — save the whole form under a name and reload it later. Your last draft is also restored automatically.",
+      helpTaskTypeTitle: "Task type",
+      helpTaskTypeBody: " — pick one or more manually, or leave it blank and the generator will guess from what you wrote (shown as a hint with a confidence level).",
+      helpQuickpackTitle: "Quick-Packs",
+      helpQuickpackBody: " — one-click requirement snippets that appear for Automation/Scraping tasks (proxy handling, retries, rate limits...).",
+      helpComplexityTitle: "Complexity",
+      helpComplexityBody: " — controls how much detail the generated prompt includes. Auto sizes it to your inputs; you can force Simple/Standard/Complex instead.",
+      helpAgentTitle: "Target agent",
+      helpAgentBody: " — adds a short note tailored to the coding agent you're using (Claude Code, Codex, Cursor...).",
+      helpDiffsTitle: "Diffs only",
+      helpDiffsBody: " — asks the agent to prefer targeted patches over rewriting whole files.",
+      helpFormatTitle: "Output format",
+      helpFormatBody: " — Markdown, plain text, or XML tags (XML is auto-suggested for Claude Code).",
+      helpHistoryTitle: "History",
+      helpHistoryBody: " — every prompt you generate is saved locally; similar past tasks are suggested for reuse.",
+      toastPromptGenerated: "Prompt generated",
+      toastNothingToCopy: "Nothing to copy yet",
+      toastCopied: "Copied!",
+      toastCopyFailed: "Copy failed — select and copy manually",
+      toastNothingToDownload: "Nothing to download yet",
+      toastDownloaded: "Downloaded {filename}",
+      toastDownloadFailed: "Download failed — copy manually instead",
+      toastCleared: "Cleared",
+      undoBtn: "Undo",
+      toastUndone: "Restored",
+      toastEnterTemplateName: "Enter a template name first",
+      toastTemplateUpdated: "Template updated",
+      toastTemplateSaved: "Template saved",
+      toastNoTemplateSelected: "No template selected",
+      toastTemplateLoaded: "Template \"{name}\" loaded",
+      confirmDeleteTemplate: "Delete template \"{name}\"?",
+      toastTemplateDeleted: "Template deleted",
+      autoDetectedHintStrong: "Auto-detected (strong match): {label} — click a type above to lock it in instead.",
+      autoDetectedHintWeak: "Auto-detected (weak guess, double-check): {label} — click a type above to lock it in instead.",
+      countsText: "{chars} characters · {lines} lines · ~{tokens} tokens (est.)",
+      counterText: "{chars} chars · {words} words",
+      complexitySimple: "Simple",
+      complexityStandard: "Standard",
+      complexityComplex: "Complex",
+      objectiveWarnShort: "The main objective is very short — add more detail so the agent understands exactly what you want.",
+      toastTemplatesExported: "Exported {n} template(s)",
+      toastNoTemplatesToExport: "No templates to export",
+      toastTemplatesImported: "Imported {n} template(s)",
+      toastImportFailed: "Import failed — invalid JSON file",
+      glossaryLabel: "Glossary / key terms",
+      glossaryPlaceholder: "One term per line, e.g. Captain = النقيب",
+      glossaryHint: "Optional — terms the agent should translate or keep consistent throughout.",
+      packProxy: "Proxy handling",
+      packAntibot: "Anti-bot / rate limits",
+      packRetry: "Retry / backoff",
+      packLeaks: "Resource leaks",
+      packSession: "Session / cookies",
+      quickpackHint: "Quick-Packs — click to add a ready-made requirement line (click again to remove it).",
+      diffsOnlyLabel: "Diffs only (no full-file rewrites)",
+      styleLabel: "Style / conventions",
+      stylePlaceholder: "e.g. No diacritics, Cairo font only, simplified Fus'ha tone",
+      complexityOverrideLabel: "Complexity",
+      complexityAuto: "Auto",
+      lengthWarningSuffix: " — quite long, consider trimming",
+      historySuggestHint: "You have a similar earlier {label} task (\"{title}\") — click to reuse its constraints & priorities.",
+      toastHistoryReused: "Reused constraints & priorities from a similar task",
+      historyTitle: "Recent prompts",
+      historyClear: "Clear all",
+      historyEmpty: "No history yet",
+      toastHistoryLoaded: "Loaded from history",
+      toastHistoryCleared: "History cleared",
+      toastHistoryDeleted: "Entry removed",
+    },
+    ar: {
+      appTitle: "مولّد أوامر البرمجة الاحترافي",
+      appSubtitle: "حوّل وصف مشروعك إلى أمر (Prompt) منظم لوكلاء البرمجة — مثل Claude Code وCodex وGemini CLI وغيرها.",
+      sheetTemplates: "القوالب",
+      templatesDesc: "احفظ النموذج بالكامل تحت اسم معيّن لإعادة تحميله لاحقًا. تُسترجَع آخر مسودة تلقائيًا أيضًا عند عودتك.",
+      templateNameLabel: "اسم القالب",
+      templateNamePlaceholder: "مثال: مشروع مراقبة العروض",
+      templateNoteLabel: "ملاحظة (اختياري)",
+      templateNotePlaceholder: "مثلاً: آخر مرة استخدمته كان لمشكلة تصدير SQLite",
+      saveTemplateBtn: "حفظ كقالب",
+      templatesAria: "القوالب المحفوظة",
+      loadTemplateBtn: "تحميل",
+      deleteTemplateBtn: "حذف",
+      noSavedTemplates: "لا توجد قوالب محفوظة",
+      exportTemplatesBtn: "تصدير الكل (JSON)",
+      importTemplatesBtn: "استيراد (JSON)",
+      sheetProject: "المشروع",
+      projectNameLabel: "اسم المشروع",
+      projectNamePlaceholder: "مثال: Deals Monitor v11",
+      techStackLabel: "التقنيات المستخدمة",
+      techStackPlaceholder: "مثال: Python, Flask, Playwright, Railway",
+      sheetCurrentState: "الوضع الحالي والسياق",
+      currentStateLabel: "الوضع الحالي للمشروع",
+      currentStatePlaceholder: "صف طبيعة المشروع وأين وصل حتى الآن...",
+      extraContextLabel: "سياق إضافي",
+      extraContextPlaceholder: "أي معلومات إضافية يجب أن يعرفها الوكيل...",
+      sheetTask: "المهمة",
+      objectiveLabel: "الهدف الرئيسي",
+      mostImportantBadge: "(الحقل الأهم)",
+      objectivePlaceholder: "ما الذي تريد أن يحققه الوكيل؟",
+      expectedResultLabel: "النتيجة النهائية المتوقعة",
+      expectedResultPlaceholder: "كيف تبدو النتيجة النهائية بعد الانتهاء؟",
+      sheetRequirements: "المتطلبات والقيود",
+      requirementsLabel: "المتطلبات",
+      requirementsPlaceholder: "متطلب واحد في كل سطر",
+      requirementsHint: "متطلب واحد في كل سطر.",
+      constraintsLabel: "القيود",
+      constraintsPlaceholder: "قيد واحد في كل سطر — أمور يجب ألا يغيّرها الوكيل",
+      constraintsHint: "قيد واحد في كل سطر.",
+      sheetKnownProblems: "المشاكل / الأخطاء المعروفة",
+      knownProblemsLabel: "السجلات أو تتبع الأخطاء أو المشاكل المعروفة",
+      knownProblemsPlaceholder: "الصق رسائل الأخطاء أو السجلات أو تتبع الأخطاء هنا...",
+      sheetPriorities: "الأولويات",
+      priorityArch: "فهم البنية المعمارية أولاً",
+      priorityMinimal: "أقل قدر ممكن من التغييرات",
+      priorityRobust: "حل متين جاهز للإنتاج",
+      priorityTesting: "الاختبار والتحقق",
+      priorityEdge: "الحالات الاستثنائية",
+      priorityRegression: "منع الانحدار (الأعطال الجانبية)",
+      prioritySecurity: "الأمان",
+      priorityPerformance: "الأداء",
+      sheetTaskType: "نوع المهمة",
+      taskTypeDesc: "اختياري — اختر نوعًا أو أكثر لتوضيح تركيز التنفيذ، وستُفعَّل الأولويات المطابقة تلقائيًا. اتركه فارغًا ليكتشف المولّد نوع المهمة مما كتبته أعلاه.",
+      sheetAgent: "الوكيل المستهدف",
+      agentDesc: "اختياري — يُصاغ الأسلوب والتعليمات بما يناسب أداة الوكيل البرمجي المختارة.",
+      agentLabel: "الوكيل",
+      agentGeneric: "أي وكيل (عام)",
+      outputTitle: "الأمر المُولّد",
+      generateBtn: "توليد الأمر",
+      copyBtn: "نسخ الأمر",
+      downloadFormatAria: "صيغة ملف التحميل",
+      downloadBtn: "تحميل",
+      clearBtn: "مسح",
+      outputFormatAria: "تنسيق الإخراج",
+      formatMarkdown: "Markdown",
+      formatPlain: "نص عادي",
+      formatXml: "وسوم XML",
+      outputViewAria: "عرض الإخراج",
+      viewRaw: "نص خام",
+      viewRendered: "معاينة منسّقة",
+      headingsLangAria: "لغة عناوين الأقسام",
+      headingsEn: "عناوين إنجليزية",
+      headingsAr: "عناوين عربية",
+      livePreviewLabel: "معاينة مباشرة",
+      outputPlaceholder: "سيظهر الأمر المُولّد هنا. املأ الحقول، ثم اضغط على «توليد الأمر».",
+      footerText: "يعمل بالكامل داخل متصفحك — لا يُرسَل أي شيء إلى أي جهة. تُحفظ المسودات والقوالب محليًا في تخزين متصفحك.",
+      langSwitchAria: "اللغة",
+      themeToggleAria: "تبديل الوضع الفاتح/الداكن",
+      helpToggleAria: "عرض المساعدة",
+      helpTemplatesTitle: "القوالب",
+      helpTemplatesBody: " — احفظ النموذج كامل تحت اسم وارجع حمّله لاحقاً. آخر مسودة ترجع تلقائياً كمان.",
+      helpTaskTypeTitle: "نوع المهمة",
+      helpTaskTypeBody: " — اختر نوع أو أكتر يدوياً، أو اتركه فاضي وراح تخمّنه الأداة من يلي كتبته (بيظهر كتلميح مع مستوى ثقة).",
+      helpQuickpackTitle: "الحزم السريعة",
+      helpQuickpackBody: " — أسطر متطلبات جاهزة بضغطة وحدة، بتظهر لمهام الأتمتة/الاستخراج (بروكسي، إعادة محاولة، حدود المعدل...).",
+      helpComplexityTitle: "التعقيد",
+      helpComplexityBody: " — بيتحكم بمقدار التفاصيل بالبرومبت الناتج. تلقائي بيتكيّف حسب مدخلاتك، أو تقدر تفرض Simple/Standard/Complex.",
+      helpAgentTitle: "الوكيل المستهدف",
+      helpAgentBody: " — بيضيف ملاحظة قصيرة مخصصة لوكيل البرمجة يلي تستخدمه (Claude Code، Codex، Cursor...).",
+      helpDiffsTitle: "تعديلات جزئية فقط",
+      helpDiffsBody: " — بيطلب من الوكيل يفضّل تعديلات محددة بدل إعادة كتابة الملف كامل.",
+      helpFormatTitle: "صيغة الناتج",
+      helpFormatBody: " — Markdown، نص عادي، أو وسوم XML (بترشّح تلقائياً لـ Claude Code).",
+      helpHistoryTitle: "السجل",
+      helpHistoryBody: " — كل برومبت تولّده يتحفظ محلياً؛ المهام المشابهة السابقة بتنقترح لإعادة الاستخدام.",
+      toastPromptGenerated: "تم توليد الأمر",
+      toastNothingToCopy: "لا يوجد شيء لنسخه بعد",
+      toastCopied: "تم النسخ!",
+      toastCopyFailed: "فشل النسخ — حدد النص وانسخه يدويًا",
+      toastNothingToDownload: "لا يوجد شيء لتحميله بعد",
+      toastDownloaded: "تم تحميل {filename}",
+      toastDownloadFailed: "فشل التحميل — انسخ يدويًا بدلاً من ذلك",
+      toastCleared: "تم المسح",
+      undoBtn: "تراجع",
+      toastUndone: "تمت الاستعادة",
+      toastEnterTemplateName: "أدخل اسم القالب أولاً",
+      toastTemplateUpdated: "تم تحديث القالب",
+      toastTemplateSaved: "تم حفظ القالب",
+      toastNoTemplateSelected: "لم يتم اختيار أي قالب",
+      toastTemplateLoaded: "تم تحميل القالب \"{name}\"",
+      confirmDeleteTemplate: "هل تريد حذف القالب \"{name}\"؟",
+      toastTemplateDeleted: "تم حذف القالب",
+      autoDetectedHintStrong: "تم الاكتشاف التلقائي (تطابق قوي): {label} — اضغط على نوع أعلاه لتثبيته بدلاً من ذلك.",
+      autoDetectedHintWeak: "تم الاكتشاف التلقائي (تخمين ضعيف، تأكد منه): {label} — اضغط على نوع أعلاه لتثبيته بدلاً من ذلك.",
+      countsText: "{chars} حرفًا · {lines} سطرًا · ~{tokens} رمزًا تقريبًا",
+      counterText: "{chars} حرفًا · {words} كلمة",
+      complexitySimple: "بسيط",
+      complexityStandard: "قياسي",
+      complexityComplex: "معقّد",
+      objectiveWarnShort: "الهدف الرئيسي قصير جدًا — أضف تفاصيل أكثر ليفهم الوكيل تمامًا ما تريده.",
+      toastTemplatesExported: "تم تصدير {n} قالب",
+      toastNoTemplatesToExport: "لا توجد قوالب للتصدير",
+      toastTemplatesImported: "تم استيراد {n} قالب",
+      toastImportFailed: "فشل الاستيراد — ملف JSON غير صالح",
+      glossaryLabel: "مسرد المصطلحات",
+      glossaryPlaceholder: "مصطلح بكل سطر، مثلاً: Captain = النقيب",
+      glossaryHint: "اختياري — مصطلحات لازم الوكيل يترجمها أو يحافظ عليها ثابتة بكل مكان.",
+      packProxy: "معالجة البروكسي",
+      packAntibot: "مقاومة الحظر / حدود المعدل",
+      packRetry: "إعادة المحاولة / Backoff",
+      packLeaks: "تسريبات الموارد",
+      packSession: "الجلسات / الكوكيز",
+      quickpackHint: "حزم سريعة — دوس لإضافة سطر متطلب جاهز (دوس مرة ثانية لإزالته).",
+      diffsOnlyLabel: "تعديلات جزئية فقط (بدون إعادة كتابة الملف كامل)",
+      styleLabel: "قواعد الأسلوب والاتفاقيات",
+      stylePlaceholder: "مثلاً: بدون تشكيل، خط Cairo فقط، فصحى مبسّطة",
+      complexityOverrideLabel: "التعقيد",
+      complexityAuto: "تلقائي",
+      lengthWarningSuffix: " — طويل نسبيًا، فكّر تختصره",
+      historySuggestHint: "عندك مهمة {label} مشابهة سابقة (\"{title}\") — اضغط لإعادة استخدام قيودها وأولوياتها.",
+      toastHistoryReused: "تم إعادة استخدام القيود والأولويات من مهمة مشابهة",
+      historyTitle: "أحدث الأوامر",
+      historyClear: "مسح الكل",
+      historyEmpty: "لا يوجد سجل بعد",
+      toastHistoryLoaded: "تم التحميل من السجل",
+      toastHistoryCleared: "تم مسح السجل",
+      toastHistoryDeleted: "تم حذف الإدخال",
+    }
+  };
+
+  function t(key, vars){
+    var dict = I18N[currentLang] || I18N.en;
+    var str = (dict[key] !== undefined) ? dict[key] : (I18N.en[key] || "");
+    if(vars){
+      Object.keys(vars).forEach(function(k){
+        str = str.replace("{" + k + "}", vars[k]);
+      });
+    }
+    return str;
+  }
+
+  var TASK_TYPES = {
+    bugfix: {
+      label: "Bug Fix", labelAr: "إصلاح خطأ", roleNote: "a bug fix",
+      focus: "For this bug fix, prioritize: reproducing the issue, isolating the root cause, applying a minimal fix, then testing for regressions.",
+      keywords: ["a bug","is broken","crashes when","doesn't work","not working","stopped working","throws an exception","throws an error","is failing","fails when","this is a defect","خطأ في","عطل في","ما يشتغل","ما بيشتغل","في مشكلة","كراش"],
+      validationExtra: ["Reproduce the original issue before considering it fixed.", "Confirm the reported symptom no longer occurs."]
+    },
+    feature: {
+      label: "Large Feature", labelAr: "ميزة كبيرة", roleNote: "a large feature",
+      focus: "For this feature, prioritize: mapping the relevant architecture, identifying dependencies, implementing the feature, integrating it cleanly, then testing thoroughly.",
+      keywords: ["add a feature","new feature","implement a new","build a new","add support for","support for adding","إضافة ميزة","ميزة جديدة","نفذ ميزة","اضافة خاصية"],
+      validationExtra: ["Verify the new functionality works end-to-end through the existing UI/API.", "Confirm it integrates correctly with existing features."]
+    },
+    refactor: {
+      label: "Refactoring", labelAr: "إعادة هيكلة", roleNote: "a refactor",
+      focus: "For this refactor, prioritize: preserving existing behavior exactly, understanding the current architecture, cleaning up the implementation, then testing for regressions.",
+      keywords: ["refactor","clean up the code","cleanup the code","restructure the","reorganize the code","messy code","technical debt","إعادة هيكلة","تنظيف الكود"],
+      validationExtra: ["Confirm behavior is identical to before the refactor.", "Check that no public interfaces changed unintentionally."]
+    },
+    performance: {
+      label: "Performance Optimization", labelAr: "تحسين الأداء", roleNote: "a performance optimization",
+      focus: "For this performance task, prioritize: profiling to find the actual bottleneck, verifying the hypothesis with data, applying a targeted optimization, then measuring the improvement without regressing correctness.",
+      keywords: ["is slow","performance issue","high latency","optimi","speed it up","make it faster","bottleneck","laggy","high cpu usage","memory usage is","بطيء","تحسين الأداء","استهلاك الذاكرة","استهلاك المعالج"],
+      validationExtra: ["Benchmark the relevant path before and after the change.", "Confirm the change does not regress correctness or noticeably increase resource usage."]
+    },
+    security: {
+      label: "Security Audit", labelAr: "تدقيق أمني", roleNote: "a security audit",
+      focus: "For this security task, prioritize: identifying attack surfaces and trust boundaries, auditing for known vulnerability classes, applying fixes with the least privilege necessary, then verifying the fix does not weaken usability or break existing functionality.",
+      keywords: ["security issue","vulnerab","exploit","sql injection","xss","csrf","auth bypass","insecure","ثغرة أمنية","اختراق","تعزيز الأمان"],
+      validationExtra: ["Confirm the fix does not introduce new attack surface.", "Verify legitimate usage still works after the fix."]
+    },
+    newproject: {
+      label: "New Project", labelAr: "مشروع جديد", roleNote: "a new project",
+      focus: "For this new project, prioritize: establishing a clean and conventional project structure, setting up the core architecture deliberately, implementing the initial functionality, then validating the setup end-to-end.",
+      keywords: ["new project","from scratch","bootstrap a","scaffold a","start a new project","set up a new project","مشروع جديد","من الصفر"],
+      validationExtra: ["Confirm the project builds and runs successfully end-to-end.", "Verify the initial structure follows the stack's normal conventions."]
+    },
+    review: {
+      label: "Full Codebase Review", labelAr: "مراجعة شاملة للكود", roleNote: "a full codebase review",
+      focus: "For this review, prioritize: systematically walking the codebase by area, documenting findings with concrete file and line references, distinguishing critical issues from minor ones, then summarizing actionable next steps.",
+      keywords: ["code review","review the codebase","audit the code","full review of","review this project","مراجعة الكود","تدقيق الكود"],
+      validationExtra: ["Reference specific files and line numbers for each finding.", "Separate critical issues from minor or stylistic ones."]
+    },
+    ui: {
+      label: "UI / UX", labelAr: "واجهة/تجربة المستخدم", roleNote: "a UI/UX improvement",
+      focus: "For this UI/UX task, prioritize: matching existing design patterns and components, verifying the change across realistic screen sizes, keeping interactions accessible and consistent with the rest of the interface, then testing the result visually and interactively.",
+      keywords: ["user interface","ui design","ui component","layout issue","css styling","responsive design","the button looks","screen layout","واجهة المستخدم","تصميم الواجهة","تنسيق الصفحة"],
+      validationExtra: ["Verify the visual result across the relevant screen sizes.", "Test the interactive behavior manually."]
+    },
+    api: {
+      label: "API / Backend", labelAr: "واجهة برمجية / الخلفية", roleNote: "API/backend work",
+      focus: "For this API task, prioritize: understanding the existing request/response contract, maintaining backward compatibility for existing consumers, validating input and error handling, then testing success, invalid-input, and failure cases.",
+      keywords: ["rest api","graphql api","the api","an api","api endpoint","backend route","http request","api response","نقطة نهاية","واجهة برمجية"],
+      validationExtra: ["Test successful requests, invalid input, and failure cases.", "Confirm backward compatibility with existing consumers."]
+    },
+    database: {
+      label: "Database", labelAr: "قاعدة البيانات", roleNote: "database work",
+      focus: "For this database task, prioritize: understanding the existing schema and data relationships, preserving data integrity, considering migration/rollback safety for any schema change, then verifying the result against realistic data.",
+      keywords: ["the database","db schema","database schema","sql query","query is slow","database migration","قاعدة بيانات","استعلام قاعدة البيانات"],
+      validationExtra: ["Verify data integrity after the change.", "Check query behavior/performance on realistic data volume."]
+    },
+    automation: {
+      label: "Automation / Scraping", labelAr: "أتمتة / استخراج بيانات", roleNote: "an automation or scraping task",
+      focus: "For this automation task, first identify what actually blocks or slows the run today (network calls, sequential waits, resource contention) before changing anything. Prioritize: handling timeouts, retries, and unavailable resources gracefully, respecting rate limits, avoiding unnecessary load on external services, cleaning up resources on failure, then testing the success path and the realistic failure cases below.",
+      keywords: ["automation script","a bot that","a scraper","web scraping","selenium","puppeteer","playwright","cron job","browser automation","بوت","سكرابر","أتمتة"],
+      validationExtra: [
+        "Test the success path end-to-end with realistic input.",
+        "Test behavior when a request times out or the target is unreachable.",
+        "Test behavior when the target rate-limits, blocks, or returns a CAPTCHA/challenge page.",
+        "Test retry/backoff behavior — confirm it stops after a sane maximum instead of looping forever.",
+        "Confirm resources (browser instances, sessions, sockets, temp files) are cleaned up on both success and failure paths.",
+        "Test graceful shutdown/cancellation mid-run without leaving orphaned processes or partial state."
+      ]
+    },
+    testing: {
+      label: "Testing", labelAr: "الاختبار", roleNote: "writing or improving tests",
+      focus: "For this testing task, prioritize: covering the actual behavior being tested rather than trivial cases, ensuring new tests fail without the fix/feature and pass with it, then confirming the tests run cleanly in the existing test setup.",
+      keywords: ["write tests","add tests for","test coverage","unit test","integration test","write unit tests","اختبارات","تغطية اختبار","كتابة اختبارات"],
+      validationExtra: ["Confirm the new tests fail without the fix/feature and pass with it.", "Check the tests run cleanly in the existing test setup."]
+    },
+    deployment: {
+      label: "Deployment / DevOps", labelAr: "النشر / DevOps", roleNote: "a deployment/DevOps task",
+      focus: "For this deployment task, prioritize: reproducing the deployment in a clean environment, minimizing manual/undocumented steps, ensuring a rollback path exists, then verifying the deployed result actually works end-to-end.",
+      keywords: ["deploy the","deployment process","ci/cd","build pipeline","dockerfile","docker image","release process","hosting setup","نشر المشروع","دبلوي","خط الأنابيب"],
+      validationExtra: ["Verify the deployment/build succeeds from a clean environment.", "Confirm a rollback path exists if the deployment fails."]
+    },
+    localization: {
+      label: "Localization", labelAr: "التعريب", roleNote: "a localization task",
+      focus: "For this localization task, prioritize: preserving meaning and tone across languages, handling text direction/encoding correctly where relevant (e.g. RTL), keeping untranslated strings from breaking the UI, then verifying the result renders correctly in context.",
+      keywords: ["localization","localize the","rtl support","arabic text","i18n","language support","تعريب","دعم اللغة العربية","دعم الاتجاه من اليمين لليسار"],
+      validationExtra: ["Verify translated text renders correctly, including RTL/encoding where relevant.", "Confirm untranslated strings fall back sensibly."]
+    },
+    translation: {
+      label: "Translation / Proofreading & Editing", labelAr: "ترجمة وتدقيق وتحرير", roleNote: "a translation, proofreading, or editing task",
+      focus: "For this task, prioritize: preserving meaning, tone, and register faithfully, keeping terminology consistent with any glossary or prior translations already in the project, respecting existing style conventions, then reviewing the result for natural fluency rather than literal word-for-word matching.",
+      keywords: ["translate this text","translate the text","proofread the translation","edit the translation","improve the translation","fix the wording","translation quality","terminology consistency","ترجم هذا النص","ترجمة النص","دقق الترجمة","حرر الترجمة","حسّن الترجمة","اتساق المصطلحات","جودة الترجمة","راجع الترجمة","تدقيق لغوي","مراجعة لغوية"],
+      validationExtra: ["Check terminology consistency against the project's existing glossary or prior translations.", "Confirm the result reads naturally in the target language rather than like a literal translation."]
+    },
+    documentation: {
+      label: "Documentation", labelAr: "التوثيق", roleNote: "a documentation task",
+      focus: "For this documentation task, prioritize: describing the actual current behavior rather than the intended behavior, keeping instructions concrete and followable, then verifying the documented steps actually work when followed literally.",
+      keywords: ["write documentation","documentation for","write docs","readme file","usage guide","api docs","دليل الاستخدام","توثيق المشروع"],
+      validationExtra: ["Confirm the documentation matches the actual current behavior.", "Check that setup/usage steps work when followed literally."]
+    },
+    migration: {
+      label: "Migration / Integration", labelAr: "الترحيل / الدمج", roleNote: "a migration or integration task",
+      focus: "For this migration task, prioritize: understanding both the source and target systems/versions, preserving existing functionality and data during the transition, ensuring a rollback plan if the migration fails partway, then verifying the result end-to-end after the change.",
+      keywords: ["migrate to","migration to","upgrade to version","port this to","integrate with","switch to a different","نقل المشروع","ترحيل البيانات","دمج مع"],
+      validationExtra: ["Verify existing functionality still works after the migration.", "Confirm a rollback plan exists if it fails partway."]
+    },
+    research: {
+      label: "Research", labelAr: "البحث", roleNote: "a research or investigation task",
+      focus: "For this research task, prioritize: basing conclusions on verifiable sources or actual measurements rather than assumption, clearly separating findings from recommendations, then presenting the trade-offs of each option considered.",
+      keywords: ["research the","investigate the","compare options","evaluate options","which is better","find the best approach","ابحث عن","مقارنة بين الخيارات"],
+      validationExtra: ["Base conclusions on verifiable sources or actual measurements, not assumption.", "Clearly separate findings from recommendations."]
+    }
+  };
+
+  var EVIDENCE_FLOW_TASK_TYPES = ["bugfix", "performance", "security"];
+  var COMPLEX_TASK_TYPES = ["newproject", "review", "migration", "security"];
+
+  // Auto-linked priorities: choosing a task type checks the matching priorities automatically.
+  var PRIORITY_LINKS = {
+    bugfix: ["regression", "testing"],
+    feature: ["arch", "testing"],
+    refactor: ["regression", "minimal"],
+    performance: ["performance", "testing"],
+    security: ["security", "edge"],
+    newproject: ["arch", "robust"],
+    review: ["arch"],
+    ui: ["testing"],
+    api: ["testing"],
+    database: ["testing"],
+    automation: ["edge", "testing"],
+    testing: ["testing"],
+    deployment: ["testing"],
+    localization: ["testing"],
+    translation: ["minimal"],
+    documentation: ["testing"],
+    migration: ["regression", "testing"],
+    research: ["arch"]
+  };
+
+  var TARGET_AGENTS = {
+    generic: {
+      opener: "You are acting as a senior software engineer working directly in this codebase.",
+      notes: null
+    },
+    "claude-code": {
+      opener: "You are Claude Code, acting as a senior software engineer working directly in this repository with your full toolset.",
+      notes: [
+        "Use your tools freely: read and search files, edit code, and run shell commands to investigate and verify.",
+        "Follow any CLAUDE.md or repository instructions you find.",
+        "Prefer editing existing files over creating new ones, and keep the diff tight."
+      ]
+    },
+    codex: {
+      opener: "You are Codex, acting as a senior software engineer working directly in this repository.",
+      notes: [
+        "Explore the repository with your shell and file tools before planning the change.",
+        "Reason step by step, then apply the patch with minimal, targeted edits.",
+        "Run the project's tests or build commands to verify your work."
+      ]
+    },
+    cursor: {
+      opener: "You are the Cursor agent, acting as a senior software engineer working directly in this codebase.",
+      notes: [
+        "Use the codebase search and file-reading tools to build context before editing.",
+        "Apply focused multi-file edits only where needed, consistent with existing conventions.",
+        "After editing, run or suggest the relevant checks to confirm correctness."
+      ]
+    },
+    "gemini-cli": {
+      opener: "You are Gemini CLI, acting as a senior software engineer working directly in this repository.",
+      notes: [
+        "Use shell and file tools to inspect the project before making changes.",
+        "Explain your plan briefly, then execute it with concrete edits and commands.",
+        "Verify the result by running the project's own checks where possible."
+      ]
+    }
+  };
+
+  var SECTION_HEADINGS_AR = {
+    "ROLE": "الدور",
+    "PROJECT": "المشروع",
+    "CURRENT STATE": "الوضع الحالي",
+    "OBJECTIVE": "الهدف",
+    "EXPECTED RESULT": "النتيجة المتوقعة",
+    "PROJECT & CONTEXT": "المشروع والسياق",
+    "REQUIREMENTS": "المتطلبات",
+    "KNOWN PROBLEMS": "المشاكل المعروفة",
+    "CONSTRAINTS": "القيود",
+    "PRIORITIES": "الأولويات",
+    "AGENT NOTES": "ملاحظات الوكيل",
+    "TERMINOLOGY": "المصطلحات",
+    "EXECUTION PROCESS": "خطوات التنفيذ",
+    "VALIDATION": "التحقق",
+    "DEFINITION OF DONE": "تعريف الإنجاز",
+    "SELF-CHECK": "تحقّق ذاتي قبل الإنهاء",
+    "FINAL RESPONSE FORMAT": "شكل الرد النهائي"
+  };
+
+  function detectTaskType(text){
+    if(!text) return { key: null, score: 0 };
+    var lower = text.toLowerCase();
+    var bestKey = null, bestScore = 0;
+    Object.keys(TASK_TYPES).forEach(function(key){
+      var score = 0;
+      TASK_TYPES[key].keywords.forEach(function(kw){
+        if(lower.indexOf(kw.toLowerCase()) !== -1) score += 1;
+      });
+      if(score > bestScore){ bestScore = score; bestKey = key; }
+    });
+    return { key: bestScore > 0 ? bestKey : null, score: bestScore };
+  }
+
+  var PRIORITY_TEXT = {
+    arch:        "Fully understand the existing architecture before writing any code.",
+    minimal:     "Prefer the smallest, most minimal change that correctly achieves the objective.",
+    robust:      "Deliver a robust, production-grade solution rather than a quick patch.",
+    testing:     "Testing and validation are a priority: verify the change thoroughly before considering it done.",
+    edge:        "Explicitly consider and handle relevant edge cases.",
+    regression:  "Actively guard against regressions in existing functionality.",
+    security:    "Treat security as a priority throughout the implementation.",
+    performance: "Consider the performance implications of the implementation."
+  };
+
+  var FIELD_IDS = ["projectName","techStack","styleConventions","currentState","extraContext","objective","expectedResult","requirements","constraints","glossary","knownProblems"];
+  var DRAFT_KEY = "epg_draft_v1";
+  var PREFS_KEY = "epg_prefs_v1";
+  var TEMPLATES_KEY = "epg_templates_v1";
+  var HISTORY_KEY = "epg_history_v1";
+  var HISTORY_LIMIT = 20;
+
+  var activePresets = [];
+  var currentFormat = "markdown";
+  var currentView = "raw";
+  var currentLang = "en";
+  var currentTheme = "dark";
+  var headingLang = "en";
+  var headingLangManual = false;
+  var formatManual = false;
+  var lastDetection = { key: null, keys: [], confidence: null, score: 0 };
+
+  function val(id){
+    return document.getElementById(id).value.trim();
+  }
+
+  function trimmedLines(text){
+    if(!text) return [];
+    return text.split("\n").map(function(l){ return l.trim(); }).filter(function(l){ return l.length > 0; });
+  }
+
+  function bulletList(lines){
+    return lines.map(function(l){ return "- " + l; }).join("\n");
+  }
+
+  function buildGenericExecution(tier, grounding){
+    grounding = grounding || {};
+    var agentsMdCheck = "If an AGENTS.md, CLAUDE.md, or similar agent-instructions file exists in this repository, read it first and follow its conventions.";
+    if(tier === "simple"){
+      var understandSimple = [agentsMdCheck, "Inspect the repository before making any changes.", "Read the relevant files before editing them."];
+      if(grounding.hasCurrentState){
+        understandSimple.push("Confirm the current-state description above still matches the code before proceeding.");
+      }
+      return "Understand the project:\n" +
+        bulletList(understandSimple) +
+        "\n\nImplement the change:\n" +
+        bulletList(["Apply the smallest change that achieves the objective."]);
+    }
+    var understandFull = [
+      agentsMdCheck,
+      "Inspect the repository before making any changes.",
+      "Understand the existing architecture and how this task fits into it.",
+      "Read relevant files before editing them.",
+      "Trace dependencies and data flow related to the objective.",
+      "Do not guess when the information can be discovered from the project itself."
+    ];
+    if(grounding.hasCurrentState){
+      understandFull.push("Start from the current-state description above, and verify it against the actual code before proceeding.");
+    }
+    return "Understand the project:\n" +
+      bulletList(understandFull) +
+      "\n\nPlan the implementation:\n" +
+      bulletList([
+        "Determine the correct implementation approach given the current architecture.",
+        "Prefer the smallest correct solution — do not rewrite working systems unnecessarily.",
+        "Identify related or adjacent systems that could be affected by this change."
+      ]) +
+      "\n\nImplement the change:\n" +
+      bulletList([
+        "Do not modify unrelated files.",
+        "Integrate the implementation with the existing architecture and conventions rather than working around them.",
+        "Consider edge cases relevant to the objective."
+      ]);
+  }
+
+  function buildEvidenceExecution(tier, grounding){
+    grounding = grounding || {};
+    var agentsMdCheck = "If an AGENTS.md, CLAUDE.md, or similar agent-instructions file exists in this repository, read it first and follow its conventions.";
+    var parts = [];
+    if(tier !== "simple"){
+      parts.push("Understand the project:\n" + bulletList([
+        agentsMdCheck,
+        "Inspect the repository before making any changes.",
+        "Understand the existing architecture relevant to this task.",
+        "Read relevant files before editing them."
+      ]));
+    }
+    var investigate;
+    if(tier === "simple"){
+      investigate = [
+        agentsMdCheck,
+        grounding.hasKnownProblems
+          ? "Reproduce the exact symptom described in Known Problems before changing anything."
+          : "Establish the current behavior/symptom before changing anything.",
+        "Identify the actual cause — do not guess at a fix."
+      ];
+    } else {
+      investigate = [
+        grounding.hasKnownProblems
+          ? "Reproduce the exact failure described in Known Problems below."
+          : "Reproduce or clearly establish the current behavior/symptom.",
+        "Gather concrete evidence (logs, profiling output, a failing test, a stack trace) before forming a hypothesis.",
+        "Identify the actual root cause — do not apply a speculative fix based on assumption."
+      ];
+    }
+    parts.push("Investigate before acting:\n" + bulletList(investigate));
+    parts.push("Implement the change:\n" + bulletList([
+      "Apply the smallest change that addresses the confirmed root cause.",
+      "Do not modify unrelated files."
+    ]));
+    return parts.join("\n\n");
+  }
+
+  function checkedPriorityKeys(){
+    return Array.prototype.slice.call(document.querySelectorAll(".priority-checkbox:checked")).map(function(cb){ return cb.dataset.key; });
+  }
+
+  // ---- Complexity (visible badge + prompt tier share the same scoring) ----
+  function computeComplexity(){
+    var overrideEl = document.getElementById("complexityOverride");
+    var override = overrideEl ? overrideEl.value : "auto";
+
+    var currentState = val("currentState");
+    var extraContext = val("extraContext");
+    var expectedResult = val("expectedResult");
+    var techStack = val("techStack");
+    var knownProblems = val("knownProblems");
+    var styleConventions = val("styleConventions");
+    var requirementsLines = trimmedLines(document.getElementById("requirements").value);
+    var constraintsLines = trimmedLines(document.getElementById("constraints").value);
+    var glossaryLines = trimmedLines(document.getElementById("glossary").value);
+    var priorities = checkedPriorityKeys();
+
+    var complexityScore = 0;
+    if(currentState) complexityScore += currentState.length > 150 ? 2 : 1;
+    if(extraContext) complexityScore += 1;
+    if(expectedResult) complexityScore += 1;
+    complexityScore += Math.min(requirementsLines.length, 3);
+    complexityScore += Math.min(constraintsLines.length, 3);
+    complexityScore += Math.min(glossaryLines.length, 2);
+    if(styleConventions) complexityScore += 1;
+    if(knownProblems) complexityScore += 2;
+    if(priorities.length >= 3) complexityScore += 1;
+    if(techStack && techStack.length > 40) complexityScore += 1;
+    activePresets.forEach(function(key){
+      if(COMPLEX_TASK_TYPES.indexOf(key) !== -1) complexityScore += 2;
+    });
+    var autoTier = complexityScore <= 2 ? "simple" : (complexityScore <= 6 ? "standard" : "complex");
+    var tier = (override === "simple" || override === "standard" || override === "complex") ? override : autoTier;
+    return { score: complexityScore, tier: tier, auto: autoTier, overridden: tier !== autoTier };
+  }
+
+  function updateComplexityBadge(){
+    var badge = document.getElementById("complexityBadge");
+    if(!badge) return;
+    var c = computeComplexity();
+    var label = c.tier === "simple" ? t("complexitySimple") : (c.tier === "standard" ? t("complexityStandard") : t("complexityComplex"));
+    badge.textContent = label;
+    badge.className = "complexity-badge " + c.tier;
+  }
+
+  function headingFor(name){
+    if(headingLang === "ar" && SECTION_HEADINGS_AR[name]) return SECTION_HEADINGS_AR[name];
+    return name;
+  }
+
+  function buildPrompt(){
+    var projectName = val("projectName");
+    var techStack = val("techStack");
+    var styleConventions = val("styleConventions");
+    var currentState = val("currentState");
+    var extraContext = val("extraContext");
+    var objective = val("objective");
+    var expectedResult = val("expectedResult");
+    var knownProblems = val("knownProblems");
+
+    var requirementsLines = trimmedLines(document.getElementById("requirements").value);
+    var constraintsLines = trimmedLines(document.getElementById("constraints").value);
+    var glossaryLines = trimmedLines(document.getElementById("glossary").value);
+
+    var checkedPriorities = checkedPriorityKeys();
+    var complexity = computeComplexity();
+    var tier = complexity.tier;
+
+    // ---- Task types: manual picks always win; otherwise detect from what was written ----
+    var detectionText = [objective, currentState, knownProblems, extraContext].filter(Boolean).join(" \n ");
+    var manualKeys = activePresets.slice();
+    var detection = manualKeys.length ? { key: null, score: 0 } : detectTaskType(detectionText);
+    var detectedKey = detection.key;
+    var taskKeys = manualKeys.length ? manualKeys : (detectedKey ? [detectedKey] : []);
+    var taskConfidence = manualKeys.length ? "manual" : (detectedKey ? "auto" : null);
+    lastDetection = { key: taskKeys[0] || null, keys: taskKeys.slice(), confidence: taskConfidence, score: detection.score };
+
+    // ---- Target agent ----
+    var agentKey = document.getElementById("targetAgent").value;
+    var agent = TARGET_AGENTS[agentKey] || TARGET_AGENTS.generic;
+
+    // ROLE
+    var role = agent.opener + " Operate with the judgment, care, and diligence expected of a senior engineer: understand the project before changing it, prefer the smallest correct solution, and take full ownership of the quality, correctness, and safety of your changes." +
+      "\n\nThis prompt does not prescribe exact implementation steps. You are expected to understand the project, determine the correct implementation, execute it, validate it, and review the result against the Definition of Done below.";
+    if(taskKeys.length){
+      var roleNotes = taskKeys.map(function(k){ return TASK_TYPES[k].roleNote; });
+      var roleNotesStr = roleNotes.length === 1
+        ? roleNotes[0]
+        : (roleNotes.slice(0, -1).join(", ") + " and " + roleNotes[roleNotes.length - 1]);
+      role += taskConfidence === "manual"
+        ? ("\n\nFor this task, you are specifically acting as the engineer responsible for " + roleNotesStr + " on this codebase.")
+        : ("\n\nBased on the description provided, this appears to primarily be " + roleNotesStr + " — adjust the approach below if the actual scope differs.");
+    }
+
+    // PROJECT
+    var project = "Project name: " + (projectName || "Not provided.") + "\n" +
+      "Tech stack: " + (techStack || "Determine the project's technology stack by inspecting the repository (dependency manifests, configuration files, and source layout) before making changes.");
+
+    // CURRENT STATE
+    var currentStateText = currentState || "No description of the current state was provided. Begin by exploring the repository to build an accurate picture of its structure, stack, and existing functionality before making any changes.";
+    if(extraContext){
+      currentStateText += "\n\nAdditional context: " + extraContext;
+    }
+
+    // OBJECTIVE
+    var objectiveText = objective || "No objective was explicitly provided. Infer the most likely objective from the current state, expected result, and known problems below; if it remains ambiguous, state your interpretation explicitly before proceeding, or ask the user to clarify.";
+
+    // EXPECTED RESULT
+    var expectedText = expectedResult || "No specific final result was described. Infer the expected result from the objective, and make sure your understanding of \"done\" matches the Definition of Done below.";
+
+    // REQUIREMENTS
+    var requirementsText = requirementsLines.length
+      ? bulletList(requirementsLines)
+      : "No explicit requirements were provided. Derive the necessary requirements from the objective and expected result, and infer any implicit requirements from the existing conventions of the codebase.";
+
+    // KNOWN PROBLEMS
+    var knownProblemsText = knownProblems ? ("```\n" + knownProblems + "\n```") : null;
+
+    // CONSTRAINTS
+    var diffsOnly = document.getElementById("diffsOnlyToggle").checked;
+    var constraintsLinesFinal = constraintsLines.slice();
+    if(diffsOnly){
+      constraintsLinesFinal.push("Prefer targeted diffs/patches over rewriting whole files; preserve existing comments and function signatures you are not intentionally changing.");
+    }
+    var constraintsText = constraintsLinesFinal.length
+      ? bulletList(constraintsLinesFinal)
+      : "Preserve all existing functionality, architecture, and public interfaces unless the objective specifically requires changing them.";
+
+    // PRIORITIES
+    var prioritiesText = checkedPriorities.length
+      ? bulletList(checkedPriorities.map(function(k){ return PRIORITY_TEXT[k]; }))
+      : null;
+
+    // EXECUTION PROCESS — evidence/root-cause-first flow for bug/perf/security, generic flow otherwise
+    var grounding = { hasCurrentState: !!currentState, hasKnownProblems: !!knownProblems };
+    var useEvidenceFlow = !manualKeys.length && detectedKey && EVIDENCE_FLOW_TASK_TYPES.indexOf(detectedKey) !== -1;
+    var execution = useEvidenceFlow ? buildEvidenceExecution(tier, grounding) : buildGenericExecution(tier, grounding);
+    if(styleConventions){
+      execution += "\n\nFollow the project's style/conventions: " + styleConventions;
+    }
+    if(taskKeys.length){
+      taskKeys.forEach(function(k){
+        var tt = TASK_TYPES[k];
+        var label = (currentLang === "ar" && tt.labelAr) ? tt.labelAr : tt.label;
+        execution += "\n\nTask focus (" + label + "): " + tt.focus;
+      });
+    }
+
+    // VALIDATION
+    var validationPoints = tier === "simple"
+      ? ["Verify the change actually achieves the objective, not just that it runs.", "Review the diff for unintended changes."]
+      : [
+          "Run the tests, builds, or checks available in the project.",
+          "Review the final diff for unintended changes or regressions.",
+          "Do not stop after making the obvious change — verify that the requested functionality works end-to-end.",
+          "Confirm that related or adjacent systems still behave correctly."
+        ];
+    if(checkedPriorities.indexOf("edge") !== -1){
+      validationPoints.push("Explicitly test the edge cases relevant to this change, not just the common path.");
+    }
+    if(checkedPriorities.indexOf("regression") !== -1){
+      validationPoints.push("Pay particular attention to regression prevention: confirm unrelated existing behavior is unaffected.");
+    }
+    if(checkedPriorities.indexOf("testing") !== -1){
+      validationPoints.push("Treat testing and validation as a first-class part of this task, not an afterthought.");
+    }
+    taskKeys.forEach(function(k){
+      var tt = TASK_TYPES[k];
+      if(tt.validationExtra){ tt.validationExtra.forEach(function(v){ validationPoints.push(v); }); }
+    });
+    var validation = bulletList(validationPoints);
+
+    // DEFINITION OF DONE
+    var dodPoints = [];
+    dodPoints.push("The objective above is fully achieved.");
+    dodPoints.push(expectedResult ? "The result matches the expected final result described above." : "The result matches a reasonable interpretation of \"done\" for this objective.");
+    if(requirementsLines.length) dodPoints.push("All listed requirements are satisfied.");
+    if(constraintsLines.length) dodPoints.push("All listed constraints are respected.");
+    dodPoints.push("No existing functionality is broken by this change.");
+    if(tier !== "simple"){
+      dodPoints.push("The change has been verified — not just implemented — using the steps in Validation.");
+    }
+    var dod = bulletList(dodPoints);
+
+    // FINAL RESPONSE FORMAT
+    var finalFormat = tier === "simple"
+      ? "When done, summarize what changed, the files touched, how it was verified, and any assumptions made. Before that, double-check you didn't expand scope beyond the objective or state any invented project detail as fact."
+      : "When the task is complete, respond with:\n" +
+        bulletList([
+          "A brief summary of what was changed and why.",
+          "The list of files that were modified, added, or removed.",
+          "How the change was tested or verified.",
+          "Any assumptions you made or decisions you took that the user should be aware of.",
+          "Any known limitations, risks, or follow-up work."
+        ]);
+
+    // ---- Assemble sections, skipping ones that would just be empty filler ----
+    var sections = [];
+    sections.push(["ROLE", role]);
+    if(agent.notes){
+      sections.push(["AGENT NOTES", bulletList(agent.notes)]);
+    }
+    if(tier === "simple"){
+      sections.push(["PROJECT & CONTEXT", project + "\n\n" + currentStateText]);
+      sections.push(["OBJECTIVE", objectiveText + (expectedResult ? ("\n\nExpected result: " + expectedResult) : "")]);
+    } else {
+      sections.push(["PROJECT", project]);
+      sections.push(["CURRENT STATE", currentStateText]);
+      sections.push(["OBJECTIVE", objectiveText]);
+      sections.push(["EXPECTED RESULT", expectedText]);
+    }
+    if(!(tier === "simple" && !requirementsLines.length)){
+      sections.push(["REQUIREMENTS", requirementsText]);
+    }
+    if(knownProblemsText || tier !== "simple"){
+      sections.push(["KNOWN PROBLEMS", knownProblemsText || "No known errors were provided. Inspect the project and identify relevant failure points related to the objective."]);
+    }
+    sections.push(["CONSTRAINTS", constraintsText]);
+    if(glossaryLines.length){
+      sections.push(["TERMINOLOGY", bulletList(glossaryLines)]);
+    }
+    if(prioritiesText){
+      sections.push(["PRIORITIES", prioritiesText]);
+    }
+    sections.push(["EXECUTION PROCESS", execution]);
+    sections.push(["VALIDATION", validation]);
+    sections.push(["DEFINITION OF DONE", dod]);
+    if(tier !== "simple"){
+      sections.push(["SELF-CHECK", bulletList([
+        "Confirm you preserved the user's stated objective without expanding scope beyond it.",
+        "Confirm you did not present any assumed or invented project detail as fact.",
+        "Confirm this is the smallest change that correctly solves the problem."
+      ])]);
+    }
+    sections.push(["FINAL RESPONSE FORMAT", finalFormat]);
+
+    if(currentFormat === "plain"){
+      return sections.map(function(s){ return headingFor(s[0]) + "\n\n" + s[1]; }).join("\n\n\n");
+    }
+    if(currentFormat === "xml"){
+      var xmlBody = sections.map(function(s){
+        var tag = xmlTag(s[0]);
+        return "<" + tag + ">\n" + s[1] + "\n</" + tag + ">";
+      }).join("\n\n");
+      return "<task>\n" + xmlBody + "\n</task>";
+    }
+    return sections.map(function(s){ return "## " + headingFor(s[0]) + "\n\n" + s[1]; }).join("\n\n---\n\n");
+  }
+
+  function xmlTag(name){
+    var slug = name.toLowerCase().replace(/&/g, "and").replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "");
+    return slug || "section";
+  }
+
+  function estimateTokens(text){
+    if(!text) return 0;
+    return Math.max(1, Math.round(text.length / 4));
+  }
+
+  function updateCounts(){
+    var text = document.getElementById("output").value;
+    var chars = text.length;
+    var lines = text ? text.split("\n").length : 0;
+    var tokens = estimateTokens(text);
+    var meta = document.getElementById("outputMeta");
+    var base = t("countsText", { chars: chars, lines: lines, tokens: tokens });
+    var isLong = tokens > 900;
+    meta.textContent = base + (isLong ? t("lengthWarningSuffix") : "");
+    meta.classList.toggle("warning", isLong);
+  }
+
+  function countWords(text){
+    var s = (text || "").trim();
+    if(!s) return 0;
+    return s.split(/\s+/).length;
+  }
+
+  var QUICK_PACKS = {
+    proxy: "Handle proxy validation and rotation: verify proxies before use, rotate away from failing proxies, and never retry the same dead proxy repeatedly.",
+    antibot: "Respect rate limits and anti-bot protections: use sensible delays/backoff, avoid request patterns that look automated, and handle CAPTCHA/block pages gracefully instead of crashing.",
+    retry: "Implement retry with exponential backoff for transient failures, with a sane maximum retry count — no infinite retry loops.",
+    leaks: "Verify no resource leaks: browser instances, open sockets, file handles, and background tasks must be cleaned up on both success and failure paths.",
+    session: "Handle session/cookie persistence correctly across restarts, and never log credentials, tokens, or session cookies in plaintext."
+  };
+
+  function toggleQuickPack(key){
+    var packText = QUICK_PACKS[key];
+    if(!packText) return;
+    var textarea = document.getElementById("requirements");
+    var lines = trimmedLines(textarea.value);
+    var idx = lines.indexOf(packText);
+    if(idx !== -1){
+      lines.splice(idx, 1);
+    } else {
+      lines.push(packText);
+    }
+    textarea.value = lines.join("\n");
+    saveDraft();
+    updateFieldCounters();
+    if(isLivePreviewOn()){ regenerateOutput(); }
+  }
+
+  function updateQuickPackButtons(){
+    var lines = trimmedLines(document.getElementById("requirements").value);
+    document.querySelectorAll(".quickpack-btn").forEach(function(btn){
+      var key = btn.dataset.pack;
+      btn.classList.toggle("active", lines.indexOf(QUICK_PACKS[key]) !== -1);
+    });
+  }
+
+  function updateQuickpackVisibility(){
+    var section = document.getElementById("quickpackSection");
+    if(!section) return;
+    var isAutomation = activePresets.indexOf("automation") !== -1 ||
+      (lastDetection.keys && lastDetection.keys.indexOf("automation") !== -1);
+    section.style.display = isAutomation ? "" : "none";
+  }
+
+  function updateFieldCounters(){
+    FIELD_IDS.forEach(function(id){
+      var el = document.getElementById("counter_" + id);
+      if(!el) return;
+      var value = document.getElementById(id).value;
+      el.textContent = t("counterText", { chars: value.length, words: countWords(value) });
+    });
+    updateQuickPackButtons();
+    updateQuickpackVisibility();
+  }
+
+  function updateObjectiveWarning(){
+    var warn = document.getElementById("objectiveWarn");
+    if(!warn) return;
+    var text = val("objective");
+    if(text && text.length < 15){
+      warn.textContent = t("objectiveWarnShort");
+      warn.classList.add("show");
+    } else {
+      warn.classList.remove("show");
+    }
+  }
+
+  // ---- Tiny Markdown renderer for the Rendered view ----
+  function escapeHtml(s){
+    return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  }
+  function inlineMd(s){
+    return s
+      .replace(/\*\*([^*]+)\*\*/g, "<b>$1</b>")
+      .replace(/`([^`]+)`/g, "<code>$1</code>");
+  }
+  function renderMarkdown(text){
+    var lines = (text || "").split("\n");
+    var html = [];
+    var inCode = false, codeBuf = [];
+    var listOpen = false, paraBuf = [];
+
+    function closeList(){ if(listOpen){ html.push("</ul>"); listOpen = false; } }
+    function flushPara(){
+      if(paraBuf.length){
+        html.push("<p>" + paraBuf.map(inlineMd).join("<br>") + "</p>");
+        paraBuf = [];
+      }
+    }
+
+    lines.forEach(function(line){
+      if(/^```/.test(line)){
+        flushPara(); closeList();
+        if(inCode){ html.push("<pre><code>" + escapeHtml(codeBuf.join("\n")) + "</code></pre>"); codeBuf = []; inCode = false; }
+        else { inCode = true; }
+        return;
+      }
+      if(inCode){ codeBuf.push(line); return; }
+      if(/^##\s+/.test(line)){
+        flushPara(); closeList();
+        html.push("<h2>" + inlineMd(line.replace(/^##\s+/, "")) + "</h2>");
+        return;
+      }
+      if(/^---+\s*$/.test(line)){
+        flushPara(); closeList();
+        html.push("<hr>");
+        return;
+      }
+      if(/^-\s+/.test(line)){
+        flushPara();
+        if(!listOpen){ html.push("<ul>"); listOpen = true; }
+        html.push("<li>" + inlineMd(line.replace(/^-\s+/, "")) + "</li>");
+        return;
+      }
+      if(line.trim() === ""){ flushPara(); closeList(); return; }
+      paraBuf.push(line);
+    });
+    flushPara(); closeList();
+    if(inCode){ html.push("<pre><code>" + escapeHtml(codeBuf.join("\n")) + "</code></pre>"); }
+    return html.join("\n");
+  }
+
+  function applyView(view){
+    currentView = (view === "rendered") ? "rendered" : "raw";
+    document.querySelectorAll("[data-view]").forEach(function(b){
+      b.classList.toggle("active", b.dataset.view === currentView);
+    });
+    var textarea = document.getElementById("output");
+    var rendered = document.getElementById("renderedPreview");
+    if(currentView === "rendered"){
+      textarea.style.display = "none";
+      rendered.style.display = "block";
+      rendered.innerHTML = renderMarkdown(textarea.value);
+      if(currentLang === "ar"){ rendered.dir = "auto"; }
+    } else {
+      textarea.style.display = "";
+      rendered.style.display = "none";
+    }
+  }
+
+  var toastTimer = null;
+  function showToast(msg){
+    var toast = document.getElementById("toast");
+    toast.textContent = msg;
+    toast.classList.add("show");
+    if(toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ toast.classList.remove("show"); }, 1800);
+  }
+
+  function showUndoToast(msg, undoText, onUndo){
+    var toast = document.getElementById("toast");
+    toast.textContent = "";
+    var span = document.createElement("span");
+    span.textContent = msg;
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "toast-undo-btn";
+    btn.textContent = undoText;
+    btn.addEventListener("click", function(){
+      if(toastTimer) clearTimeout(toastTimer);
+      toast.classList.remove("show");
+      onUndo();
+    });
+    toast.appendChild(span);
+    toast.appendChild(btn);
+    toast.classList.add("show");
+    if(toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ toast.classList.remove("show"); }, 8000);
+  }
+
+  function flashPanel(){
+    var panel = document.getElementById("outputPanel");
+    panel.classList.add("just-generated");
+    setTimeout(function(){ panel.classList.remove("just-generated"); }, 900);
+  }
+
+  function updateTaskTypeHint(){
+    var hint = document.getElementById("taskTypeHint");
+    if(!hint) return;
+    if(lastDetection.confidence === "auto" && lastDetection.key && TASK_TYPES[lastDetection.key]){
+      var tt = TASK_TYPES[lastDetection.key];
+      var label = (currentLang === "ar" && tt.labelAr) ? tt.labelAr : tt.label;
+      var key = lastDetection.score >= 2 ? "autoDetectedHintStrong" : "autoDetectedHintWeak";
+      hint.textContent = t(key, { label: label });
+      hint.style.display = "";
+    } else {
+      hint.textContent = "";
+      hint.style.display = "none";
+    }
+  }
+
+  function regenerateOutput(){
+    var output = document.getElementById("output");
+    output.value = buildPrompt();
+    updateCounts();
+    updateTaskTypeHint();
+    updateComplexityBadge();
+    updateQuickpackVisibility();
+    if(currentView === "rendered"){ applyView("rendered"); }
+  }
+
+  function isLivePreviewOn(){
+    var toggle = document.getElementById("livePreviewToggle");
+    return !!(toggle && toggle.checked);
+  }
+
+  function debounce(fn, wait){
+    var timer;
+    return function(){
+      var args = arguments, ctx = this;
+      clearTimeout(timer);
+      timer = setTimeout(function(){ fn.apply(ctx, args); }, wait);
+    };
+  }
+
+  function safeGetItem(key){
+    try { return localStorage.getItem(key); } catch(e){ return null; }
+  }
+  function safeSetItem(key, value){
+    try { localStorage.setItem(key, value); return true; } catch(e){ return false; }
+  }
+  function safeRemoveItem(key){
+    try { localStorage.removeItem(key); } catch(e){}
+  }
+
+  function captureFormState(){
+    var fields = {};
+    FIELD_IDS.forEach(function(id){
+      fields[id] = document.getElementById(id).value;
+    });
+    var priorities = checkedPriorityKeys();
+    return { fields: fields, priorities: priorities, presets: activePresets, agent: document.getElementById("targetAgent").value, diffsOnly: document.getElementById("diffsOnlyToggle").checked };
+  }
+
+  function applyFormState(state){
+    if(!state) return;
+    if(state.fields){
+      FIELD_IDS.forEach(function(id){
+        if(Object.prototype.hasOwnProperty.call(state.fields, id)){
+          document.getElementById(id).value = state.fields[id];
+        }
+      });
+    }
+    document.querySelectorAll(".priority-checkbox").forEach(function(cb){
+      cb.checked = !!(state.priorities && state.priorities.indexOf(cb.dataset.key) !== -1);
+    });
+    document.querySelectorAll(".preset-btn").forEach(function(b){ b.classList.remove("active"); });
+    activePresets = (state.presets && Array.isArray(state.presets)) ? state.presets.slice() : (state.preset ? [state.preset] : []);
+    activePresets.forEach(function(key){
+      var btn = document.querySelector('.preset-btn[data-preset="' + key + '"]');
+      if(btn){ btn.classList.add("active"); } else {
+        activePresets = activePresets.filter(function(k){ return k !== key; });
+      }
+    });
+    if(state.agent && TARGET_AGENTS[state.agent]){
+      document.getElementById("targetAgent").value = state.agent;
+    }
+    document.getElementById("diffsOnlyToggle").checked = !!state.diffsOnly;
+  }
+
+  function saveDraft(){
+    safeSetItem(DRAFT_KEY, JSON.stringify(captureFormState()));
+  }
+
+  function loadDraft(){
+    var raw = safeGetItem(DRAFT_KEY);
+    if(!raw) return false;
+    try {
+      applyFormState(JSON.parse(raw));
+      return true;
+    } catch(e){ return false; }
+  }
+
+  function setFormat(fmt){
+    currentFormat = (fmt === "plain" || fmt === "xml") ? fmt : "markdown";
+    document.querySelectorAll("[data-format]").forEach(function(b){
+      b.classList.toggle("active", b.dataset.format === currentFormat);
+    });
+  }
+
+  function savePrefs(){
+    safeSetItem(PREFS_KEY, JSON.stringify({
+      format: currentFormat,
+      formatManual: formatManual,
+      livePreview: isLivePreviewOn(),
+      lang: currentLang,
+      theme: currentTheme,
+      headingLang: headingLang,
+      headingLangManual: headingLangManual,
+      view: currentView,
+      agent: document.getElementById("targetAgent").value,
+      complexityOverride: document.getElementById("complexityOverride").value
+    }));
+  }
+
+  function loadPrefs(){
+    var raw = safeGetItem(PREFS_KEY);
+    if(!raw) return;
+    try {
+      var prefs = JSON.parse(raw);
+      setFormat(prefs.format);
+      formatManual = !!prefs.formatManual;
+      var toggle = document.getElementById("livePreviewToggle");
+      if(toggle){ toggle.checked = !!prefs.livePreview; }
+      if(prefs.lang === "ar" || prefs.lang === "en"){ currentLang = prefs.lang; }
+      if(prefs.theme === "light" || prefs.theme === "dark"){ currentTheme = prefs.theme; }
+      if(prefs.headingLang === "ar" || prefs.headingLang === "en"){
+        headingLang = prefs.headingLang;
+        headingLangManual = !!prefs.headingLangManual;
+      }
+      if(prefs.view === "rendered" || prefs.view === "raw"){ currentView = prefs.view; }
+      if(prefs.agent && TARGET_AGENTS[prefs.agent]){
+        document.getElementById("targetAgent").value = prefs.agent;
+      }
+      if(["auto","simple","standard","complex"].indexOf(prefs.complexityOverride) !== -1){
+        document.getElementById("complexityOverride").value = prefs.complexityOverride;
+      }
+    } catch(e){}
+  }
+
+  function applyTheme(theme){
+    currentTheme = (theme === "light") ? "light" : "dark";
+    document.documentElement.setAttribute("data-theme", currentTheme);
+    document.getElementById("themeBtn").textContent = currentTheme === "dark" ? "☀" : "☾";
+  }
+
+  function applyLanguage(lang){
+    currentLang = (lang === "ar") ? "ar" : "en";
+    var isRtl = currentLang === "ar";
+    document.documentElement.lang = currentLang;
+    document.documentElement.dir = isRtl ? "rtl" : "ltr";
+    document.title = t("appTitle");
+
+    if(!headingLangManual){
+      headingLang = currentLang;
+      document.getElementById("headingsLang").value = headingLang;
+    }
+
+    document.querySelectorAll("[data-i18n]").forEach(function(el){
+      el.textContent = t(el.getAttribute("data-i18n"));
+    });
+    document.querySelectorAll("[data-i18n-placeholder]").forEach(function(el){
+      el.placeholder = t(el.getAttribute("data-i18n-placeholder"));
+    });
+    document.querySelectorAll("[data-i18n-aria]").forEach(function(el){
+      el.setAttribute("aria-label", t(el.getAttribute("data-i18n-aria")));
+    });
+    document.querySelectorAll(".preset-btn").forEach(function(btn){
+      var tt = TASK_TYPES[btn.dataset.preset];
+      if(tt){ btn.textContent = (isRtl && tt.labelAr) ? tt.labelAr : tt.label; }
+    });
+    document.querySelectorAll(".lang-btn").forEach(function(btn){
+      btn.classList.toggle("active", btn.dataset.lang === currentLang);
+    });
+
+    refreshTemplateSelect();
+    refreshHistory();
+    updateTaskTypeHint();
+    updateCounts();
+    updateFieldCounters();
+    updateObjectiveWarning();
+    updateComplexityBadge();
+    if(currentView === "rendered"){ applyView("rendered"); }
+  }
+
+  // ---------- Templates ----------
+  function getTemplates(){
+    var raw = safeGetItem(TEMPLATES_KEY);
+    if(!raw) return {};
+    try {
+      var parsed = JSON.parse(raw);
+      return (parsed && typeof parsed === "object") ? parsed : {};
+    } catch(e){ return {}; }
+  }
+
+  function setTemplates(obj){
+    safeSetItem(TEMPLATES_KEY, JSON.stringify(obj));
+  }
+
+  function refreshTemplateSelect(){
+    var select = document.getElementById("templateSelect");
+    var templates = getTemplates();
+    var names = Object.keys(templates).sort(function(a, b){ return a.localeCompare(b); });
+    select.innerHTML = "";
+    if(names.length === 0){
+      var emptyOpt = document.createElement("option");
+      emptyOpt.value = "";
+      emptyOpt.textContent = t("noSavedTemplates");
+      select.appendChild(emptyOpt);
+      select.disabled = true;
+    } else {
+      select.disabled = false;
+      names.forEach(function(name){
+        var opt = document.createElement("option");
+        opt.value = name;
+        opt.textContent = name;
+        select.appendChild(opt);
+      });
+    }
+    updateTemplateNotePreview();
+  }
+
+  function slugify(text){
+    var s = (text || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+    return s || "prompt";
+  }
+
+  // ---------- History ----------
+  function getHistory(){
+    var raw = safeGetItem(HISTORY_KEY);
+    if(!raw) return [];
+    try {
+      var parsed = JSON.parse(raw);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch(e){ return []; }
+  }
+
+  function setHistory(arr){
+    safeSetItem(HISTORY_KEY, JSON.stringify(arr.slice(0, HISTORY_LIMIT)));
+  }
+
+  function pushHistory(text){
+    if(!text || !text.trim()) return;
+    var history = getHistory();
+    if(history.length && history[0].text === text) return;
+    var title = val("projectName") || (val("objective").slice(0, 60) || "Untitled prompt");
+    history.unshift({ ts: Date.now(), title: title, text: text, state: captureFormState(), taskKeys: (lastDetection.keys || []).slice() });
+    setHistory(history);
+    refreshHistory();
+  }
+
+  function findSimilarHistoryEntry(taskKeys){
+    if(!taskKeys || !taskKeys.length) return null;
+    var history = getHistory();
+    for(var i = 1; i < history.length; i++){ // skip index 0: the entry just pushed for this generation
+      var entry = history[i];
+      if(!entry.state || !entry.taskKeys || !entry.taskKeys.length) continue;
+      var overlaps = entry.taskKeys.some(function(k){ return taskKeys.indexOf(k) !== -1; });
+      if(overlaps) return entry;
+    }
+    return null;
+  }
+
+  function reuseFromHistory(entry){
+    if(!entry || !entry.state || !entry.state.fields) return;
+    ["constraints", "glossary", "styleConventions"].forEach(function(id){
+      if(entry.state.fields[id]){
+        document.getElementById(id).value = entry.state.fields[id];
+      }
+    });
+    if(entry.state.priorities && entry.state.priorities.length){
+      document.querySelectorAll(".priority-checkbox").forEach(function(cb){
+        cb.checked = entry.state.priorities.indexOf(cb.dataset.key) !== -1;
+      });
+    }
+    saveDraft();
+    updateFieldCounters();
+    hideHistorySuggestion();
+    showToast(t("toastHistoryReused"));
+    if(isLivePreviewOn()){ regenerateOutput(); }
+  }
+
+  function hideHistorySuggestion(){
+    var hint = document.getElementById("historySuggestHint");
+    if(hint){ hint.style.display = "none"; hint.onclick = null; }
+  }
+
+  function updateHistorySuggestion(){
+    var hint = document.getElementById("historySuggestHint");
+    if(!hint) return;
+    var match = findSimilarHistoryEntry(lastDetection.keys);
+    if(!match){
+      hideHistorySuggestion();
+      return;
+    }
+    var key = match.taskKeys[0];
+    var tt = TASK_TYPES[key];
+    var label = tt ? ((currentLang === "ar" && tt.labelAr) ? tt.labelAr : tt.label) : key;
+    hint.textContent = t("historySuggestHint", { label: label, title: match.title });
+    hint.style.display = "";
+    hint.onclick = function(){ reuseFromHistory(match); };
+  }
+
+  function refreshHistory(){
+    var list = document.getElementById("historyList");
+    var history = getHistory();
+    list.innerHTML = "";
+    if(!history.length){
+      var empty = document.createElement("div");
+      empty.className = "history-empty";
+      empty.textContent = t("historyEmpty");
+      list.appendChild(empty);
+      return;
+    }
+    history.forEach(function(entry, idx){
+      var item = document.createElement("div");
+      item.className = "history-item";
+      var title = document.createElement("span");
+      title.className = "hi-title";
+      title.textContent = entry.title;
+      var meta = document.createElement("span");
+      meta.className = "hi-meta";
+      var d = new Date(entry.ts);
+      meta.textContent = d.toLocaleDateString() + " " + d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+      var del = document.createElement("button");
+      del.type = "button";
+      del.className = "hi-del";
+      del.textContent = "✕";
+      del.setAttribute("aria-label", t("toastHistoryDeleted"));
+      del.addEventListener("click", function(e){
+        e.stopPropagation();
+        var h = getHistory();
+        h.splice(idx, 1);
+        setHistory(h);
+        refreshHistory();
+        showToast(t("toastHistoryDeleted"));
+      });
+      item.appendChild(title);
+      item.appendChild(meta);
+      item.appendChild(del);
+      item.addEventListener("click", function(){
+        var output = document.getElementById("output");
+        output.value = entry.text;
+        updateCounts();
+        applyView(currentView);
+        showToast(t("toastHistoryLoaded"));
+      });
+      list.appendChild(item);
+    });
+  }
+
+  // ---------- Events ----------
+  document.getElementById("generateBtn").addEventListener("click", function(){
+    regenerateOutput();
+    pushHistory(document.getElementById("output").value);
+    updateHistorySuggestion();
+    flashPanel();
+    showToast(t("toastPromptGenerated"));
+    if(window.innerWidth < 1000){
+      document.getElementById("outputPanel").scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  });
+
+  document.getElementById("copyBtn").addEventListener("click", function(){
+    var output = document.getElementById("output");
+    var text = output.value;
+    if(!text.trim()){
+      showToast(t("toastNothingToCopy"));
+      return;
+    }
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(function(){
+        showToast(t("toastCopied"));
+      }).catch(function(){
+        fallbackCopy(output, text);
+      });
+    } else {
+      fallbackCopy(output, text);
+    }
+  });
+
+  function fallbackCopy(output, text){
+    try{
+      output.focus();
+      output.select();
+      output.setSelectionRange(0, text.length);
+      var ok = document.execCommand("copy");
+      showToast(ok ? t("toastCopied") : t("toastCopyFailed"));
+    } catch(err){
+      showToast(t("toastCopyFailed"));
+    }
+  }
+
+  document.getElementById("downloadBtn").addEventListener("click", function(){
+    var text = document.getElementById("output").value;
+    if(!text.trim()){
+      showToast(t("toastNothingToDownload"));
+      return;
+    }
+    var ext = document.getElementById("downloadFormat").value === "txt" ? "txt" : "md";
+    var filename = slugify(val("projectName")) + "." + ext;
+    var mime = ext === "md" ? "text/markdown" : "text/plain";
+    try {
+      var blob = new Blob([text], { type: mime + ";charset=utf-8" });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
+      showToast(t("toastDownloaded", { filename: filename }));
+    } catch(e){
+      showToast(t("toastDownloadFailed"));
+    }
+  });
+
+  document.getElementById("clearBtn").addEventListener("click", function(){
+    var preClearState = captureFormState();
+    var preClearOutput = document.getElementById("output").value;
+    var preClearTemplateName = document.getElementById("templateName").value;
+    var preClearTemplateNote = document.getElementById("templateNote").value;
+    var preClearDetection = lastDetection;
+
+    FIELD_IDS.forEach(function(id){
+      document.getElementById(id).value = "";
+    });
+    document.getElementById("templateName").value = "";
+    document.getElementById("templateNote").value = "";
+    document.querySelectorAll(".priority-checkbox").forEach(function(cb){ cb.checked = false; });
+    document.querySelectorAll(".preset-btn").forEach(function(b){ b.classList.remove("active"); });
+    activePresets = [];
+    lastDetection = { key: null, keys: [], confidence: null, score: 0 };
+    document.getElementById("output").value = "";
+    updateCounts();
+    updateObjectiveWarning();
+    updateFieldCounters();
+    updateComplexityBadge();
+    updateTaskTypeHint();
+    applyView(currentView);
+    safeRemoveItem(DRAFT_KEY);
+    hideHistorySuggestion();
+
+    showUndoToast(t("toastCleared"), t("undoBtn"), function(){
+      applyFormState(preClearState);
+      document.getElementById("templateName").value = preClearTemplateName;
+      document.getElementById("templateNote").value = preClearTemplateNote;
+      document.getElementById("output").value = preClearOutput;
+      lastDetection = preClearDetection;
+      saveDraft();
+      updateCounts();
+      updateObjectiveWarning();
+      updateFieldCounters();
+      updateComplexityBadge();
+      updateTaskTypeHint();
+      applyView(currentView);
+      showToast(t("toastUndone"));
+    });
+  });
+
+  document.querySelectorAll(".preset-btn").forEach(function(btn){
+    btn.addEventListener("click", function(){
+      var key = this.dataset.preset;
+      var idx = activePresets.indexOf(key);
+      if(idx !== -1){
+        activePresets.splice(idx, 1);
+        this.classList.remove("active");
+      } else {
+        activePresets.push(key);
+        this.classList.add("active");
+        // Auto-link priorities for the newly selected task type.
+        var links = PRIORITY_LINKS[key] || [];
+        links.forEach(function(pKey){
+          var cb = document.querySelector('.priority-checkbox[data-key="' + pKey + '"]');
+          if(cb){ cb.checked = true; }
+        });
+      }
+      saveDraft();
+      updateComplexityBadge();
+      updateQuickpackVisibility();
+      if(isLivePreviewOn()){ regenerateOutput(); }
+    });
+  });
+
+  document.querySelectorAll("[data-format]").forEach(function(btn){
+    btn.addEventListener("click", function(){
+      setFormat(this.dataset.format);
+      formatManual = true;
+      savePrefs();
+      if(isLivePreviewOn()){ regenerateOutput(); }
+    });
+  });
+
+  document.querySelectorAll("[data-view]").forEach(function(btn){
+    btn.addEventListener("click", function(){
+      applyView(this.dataset.view);
+      savePrefs();
+    });
+  });
+
+  document.getElementById("headingsLang").addEventListener("change", function(){
+    headingLang = this.value === "ar" ? "ar" : "en";
+    headingLangManual = true;
+    savePrefs();
+    if(isLivePreviewOn()){ regenerateOutput(); }
+  });
+
+  document.getElementById("complexityOverride").addEventListener("change", function(){
+    savePrefs();
+    updateComplexityBadge();
+    if(isLivePreviewOn()){ regenerateOutput(); }
+  });
+
+  document.querySelectorAll(".lang-btn").forEach(function(btn){
+    btn.addEventListener("click", function(){
+      if(this.dataset.lang === currentLang) return;
+      applyLanguage(this.dataset.lang);
+      savePrefs();
+      if(isLivePreviewOn()){ regenerateOutput(); }
+    });
+  });
+
+  document.getElementById("themeBtn").addEventListener("click", function(){
+    applyTheme(currentTheme === "dark" ? "light" : "dark");
+    savePrefs();
+  });
+
+  document.getElementById("helpBtn").addEventListener("click", function(){
+    var panel = document.getElementById("helpPanel");
+    panel.style.display = (panel.style.display === "none") ? "" : "none";
+  });
+
+  document.getElementById("targetAgent").addEventListener("change", function(){
+    if(!formatManual){
+      setFormat(this.value === "claude-code" ? "xml" : "markdown");
+    }
+    savePrefs();
+    if(isLivePreviewOn()){ regenerateOutput(); }
+  });
+
+  document.getElementById("livePreviewToggle").addEventListener("change", function(){
+    savePrefs();
+    if(this.checked){ regenerateOutput(); }
+  });
+
+  document.getElementById("saveTemplateBtn").addEventListener("click", function(){
+    var name = val("templateName");
+    if(!name){
+      showToast(t("toastEnterTemplateName"));
+      return;
+    }
+    var templates = getTemplates();
+    var isOverwrite = Object.prototype.hasOwnProperty.call(templates, name);
+    templates[name] = captureFormState();
+    templates[name].note = val("templateNote");
+    setTemplates(templates);
+    refreshTemplateSelect();
+    document.getElementById("templateSelect").value = name;
+    updateTemplateNotePreview();
+    showToast(isOverwrite ? t("toastTemplateUpdated") : t("toastTemplateSaved"));
+  });
+
+  document.getElementById("loadTemplateBtn").addEventListener("click", function(){
+    var select = document.getElementById("templateSelect");
+    var name = select.value;
+    var templates = getTemplates();
+    if(!name || !templates[name]){
+      showToast(t("toastNoTemplateSelected"));
+      return;
+    }
+    applyFormState(templates[name]);
+    document.getElementById("templateName").value = name;
+    document.getElementById("templateNote").value = templates[name].note || "";
+    saveDraft();
+    updateFieldCounters();
+    updateObjectiveWarning();
+    updateComplexityBadge();
+    if(isLivePreviewOn()){ regenerateOutput(); }
+    showToast(t("toastTemplateLoaded", { name: name }));
+  });
+
+  function updateTemplateNotePreview(){
+    var preview = document.getElementById("templateNotePreview");
+    if(!preview) return;
+    var select = document.getElementById("templateSelect");
+    var templates = getTemplates();
+    var entry = select.value && templates[select.value];
+    preview.textContent = (entry && entry.note) ? entry.note : "";
+  }
+
+  document.getElementById("templateSelect").addEventListener("change", updateTemplateNotePreview);
+
+  document.getElementById("deleteTemplateBtn").addEventListener("click", function(){
+    var select = document.getElementById("templateSelect");
+    var name = select.value;
+    var templates = getTemplates();
+    if(!name || !templates[name]){
+      showToast(t("toastNoTemplateSelected"));
+      return;
+    }
+    if(!window.confirm(t("confirmDeleteTemplate", { name: name }))) return;
+    delete templates[name];
+    setTemplates(templates);
+    refreshTemplateSelect();
+    showToast(t("toastTemplateDeleted"));
+  });
+
+  document.getElementById("exportTemplatesBtn").addEventListener("click", function(){
+    var templates = getTemplates();
+    var names = Object.keys(templates);
+    if(!names.length){
+      showToast(t("toastNoTemplatesToExport"));
+      return;
+    }
+    var payload = JSON.stringify({ app: "expert-coding-prompt-generator", version: 1, exportedAt: new Date().toISOString(), templates: templates }, null, 2);
+    try {
+      var blob = new Blob([payload], { type: "application/json;charset=utf-8" });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement("a");
+      a.href = url;
+      a.download = "prompt-templates-" + new Date().toISOString().slice(0, 10) + ".json";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
+      showToast(t("toastTemplatesExported", { n: names.length }));
+    } catch(e){
+      showToast(t("toastDownloadFailed"));
+    }
+  });
+
+  document.getElementById("importTemplatesBtn").addEventListener("click", function(){
+    document.getElementById("importTemplatesFile").click();
+  });
+
+  document.getElementById("importTemplatesFile").addEventListener("change", function(){
+    var file = this.files && this.files[0];
+    this.value = "";
+    if(!file) return;
+    var reader = new FileReader();
+    reader.onload = function(){
+      try {
+        var parsed = JSON.parse(reader.result);
+        var incoming = (parsed && parsed.templates && typeof parsed.templates === "object") ? parsed.templates : (parsed && typeof parsed === "object" ? parsed : null);
+        if(!incoming){ throw new Error("bad format"); }
+        var templates = getTemplates();
+        var imported = 0;
+        Object.keys(incoming).forEach(function(name){
+          if(incoming[name] && typeof incoming[name] === "object" && incoming[name].fields){
+            templates[name] = incoming[name];
+            imported += 1;
+          }
+        });
+        setTemplates(templates);
+        refreshTemplateSelect();
+        showToast(imported ? t("toastTemplatesImported", { n: imported }) : t("toastImportFailed"));
+      } catch(e){
+        showToast(t("toastImportFailed"));
+      }
+    };
+    reader.readAsText(file);
+  });
+
+  document.getElementById("historyClearBtn").addEventListener("click", function(){
+    setHistory([]);
+    refreshHistory();
+    showToast(t("toastHistoryCleared"));
+  });
+
+  // Ctrl+Enter anywhere generates the prompt.
+  document.addEventListener("keydown", function(e){
+    if((e.ctrlKey || e.metaKey) && e.key === "Enter"){
+      e.preventDefault();
+      document.getElementById("generateBtn").click();
+    }
+  });
+
+  var autosaveDebounced = debounce(function(){
+    saveDraft();
+    updateComplexityBadge();
+  }, 500);
+  var livePreviewDebounced = debounce(function(){
+    if(isLivePreviewOn()){ regenerateOutput(); }
+  }, 400);
+
+  FIELD_IDS.forEach(function(id){
+    document.getElementById(id).addEventListener("input", function(){
+      autosaveDebounced();
+      livePreviewDebounced();
+      updateFieldCounters();
+      updateObjectiveWarning();
+    });
+  });
+
+  document.querySelectorAll(".priority-checkbox").forEach(function(cb){
+    cb.addEventListener("change", function(){
+      saveDraft();
+      updateComplexityBadge();
+      if(isLivePreviewOn()){ regenerateOutput(); }
+    });
+  });
+
+  document.getElementById("diffsOnlyToggle").addEventListener("change", function(){
+    saveDraft();
+    if(isLivePreviewOn()){ regenerateOutput(); }
+  });
+
+  document.querySelectorAll(".quickpack-btn").forEach(function(btn){
+    btn.addEventListener("click", function(){
+      toggleQuickPack(this.dataset.pack);
+    });
+  });
+
+  document.getElementById("output").addEventListener("input", function(){
+    updateCounts();
+    if(currentView === "rendered"){ applyView("rendered"); }
+  });
+
+  // ---------- Init ----------
+  // Wrap each field label with a live counter.
+  FIELD_IDS.forEach(function(id){
+    var field = document.getElementById(id).closest(".field");
+    var label = field.querySelector("label");
+    if(!label || label.parentElement.classList.contains("label-row")) return;
+    var row = document.createElement("div");
+    row.className = "label-row";
+    label.parentNode.insertBefore(row, label);
+    row.appendChild(label);
+    var counter = document.createElement("span");
+    counter.className = "counter";
+    counter.id = "counter_" + id;
+    row.appendChild(counter);
+  });
+
+  loadPrefs();
+  applyTheme(currentTheme);
+  applyLanguage(currentLang);
+  setFormat(currentFormat);
+  applyView(currentView);
+  loadDraft();
+  updateFieldCounters();
+  updateObjectiveWarning();
+  updateComplexityBadge();
+  refreshHistory();
+  if(isLivePreviewOn()){ regenerateOutput(); }
+})();
+</script>
+
+</body>
+</html>
